@@ -1,6 +1,8 @@
 import easyocr
 import cv2
 
+from .correction import correct_text_batch
+
 reader = easyocr.Reader(['en'], gpu=False)
 
 def extract_text(image):
@@ -16,7 +18,7 @@ def extract_text(image):
         paragraph=True
     )
 
-    formatted_results = []
+    raw_data = []
 
     for (bbox, text) in results:
         # Corner coordinates of each detected text box
@@ -27,18 +29,45 @@ def extract_text(image):
         w = int(tr[0] - tl[0])
         h = int(br[1] - tr[1])
 
-        formatted_results.append({
-            "text": text,
+        raw_data.append({
+            "raw_text": text,
             "box": [x, y, w, h],
             "conf": 99
         })
+
+    # Extract text from raw data
+    text_strings = [item["raw_text"] for item in raw_data]
+
+    # Send to LLM for cleanup
+    if text_strings:
+        print("Correcting text with AI")
+        cleaned_strings = correct_text_batch(text_strings)
+
+        # Safety check for list length match
+        if len(cleaned_strings) == len(raw_data):
+            for i in range(len(raw_data)):
+                raw_data[i]["text"] = cleaned_strings[i]
+        
+        else:
+            print("AI returned different number of items")
+            for item in raw_data:
+                # Rename key
+                item["text"] = item["raw_text"]
     
-    return formatted_results
+    final_results = []
+    for item in raw_data:
+        final_results.append({
+            "text": item.get("text", item["raw_text"]),
+            "box": item["box"],
+            "conf": item["conf"]
+        })
+
+    return final_results
 
 # Independant testing block
 if __name__ == '__main__':
     # Load test image
-    test_image_path = "../flowchart_test_images/monitor.png"
+    test_image_path = "../flowchart_test_images/2sum.png"
 
     print(f"Testing OCR on {test_image_path}")
 
