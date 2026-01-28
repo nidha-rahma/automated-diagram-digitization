@@ -43,9 +43,9 @@ def correct_text_batch(text_list):
 
         clean_text = response.text.strip()
         if clean_text.startswith("```json"):
-            text_response = clean_text[7:]
+            clean_text = clean_text[7:]
         if clean_text.endswith("```"):
-            text_response = clean_text[:-3]
+            clean_text = clean_text[:-3]
 
         return json.loads(clean_text)
 

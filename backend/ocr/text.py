@@ -68,7 +68,7 @@ if __name__ == '__main__':
 
         # Print results
         for item in detected_text:
-            print(F"Text: '{item["text"]}' | Confidence: {item["conf"]}% | Box: {item["box"]}")
+            print(f"Text: '{item["text"]}' | Confidence: {item["conf"]}% | Box: {item["box"]}")
 
             # Draw box on image
             x, y, w, h = item['box']
