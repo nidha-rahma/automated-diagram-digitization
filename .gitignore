@@ -1,16 +1,44 @@
-# Backend secrets
-backend/.env
-
-# Virtual environment
-backend/venv/
-backend/.venv/
-
-# Python cache
-__pycache__/
-*.pyc
+# =========================
+# Frontend (React)
+# =========================
+/frontend/node_modules/
+/frontend/dist/
+/frontend/dist-ssr/
+/frontend/*.local
 
 # Logs
-*.log
+/frontend/logs
+/frontend/*.log
+/frontend/npm-debug.log*
+/frontend/yarn-debug.log*
+/frontend/yarn-error.log*
+/frontend/pnpm-debug.log*
+/frontend/lerna-debug.log*
 
-# VS Code
-.vscode/
+# =========================
+# Backend (Python)
+# =========================
+/backend/__pycache__/
+/backend/venv/
+/backend/.env
+/backend/*.pyc
+
+# =========================
+# Environment Files (Global)
+# =========================
+.env
+.env.local
+.env.*.local
+
+# =========================
+# Editor / OS Files
+# =========================
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
