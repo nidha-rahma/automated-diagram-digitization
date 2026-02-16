@@ -57,15 +57,19 @@ Follow these strict rules:
 - source: ID where the arrow starts.
 - target: ID where the arrow points.
 - label: Any text written on the edge (Yes/No/etc). If none, use empty string.
-- Default edge type: "smoothstep".
+- type: "smoothstep".
+- markerEnd must be included as:
+  "markerEnd": { "type": "arrowclosed" }
+
 - Output each edge in this format:
-  {
-    "id": "e1-2",
-    "source": "1",
-    "target": "2",
-    "label": "Yes",
-    "type": "smoothstep"
-  }
+{
+  "id": "e1-2",
+  "source": "1",
+  "target": "2",
+  "label": "Yes",
+  "type": "smoothstep",
+  "markerEnd": { "type": "arrowclosed" }
+}
 
 3. Output format:
 - Return ONLY raw JSON.
@@ -106,10 +110,16 @@ async def analyze_flowchart(file: UploadFile = File(...)):
         )
 
         # Verify response
+        if not response.text:
+            raise ValueError("Empty response from Gemini")
+
         json_data = json.loads(response.text)
 
         if "nodes" not in json_data or "edges" not in json_data:
             raise ValueError("Invalid AI response format")
+
+        for i, edge in enumerate(json_data["edges"]):
+            edge["id"] = f"e{i}"
 
         for node in json_data["nodes"]:
             node["position"]["x"] = int(node["position"]["x"])
