@@ -1,10 +1,15 @@
 import React from "react";
 import { Handle, Position } from "reactflow";
+import { useEditableNode } from "../hooks/useEditableNodes";
 
 export function DecisionNode({ data }) {
+  const { isEditing, label, onDoubleClick, onBlur, onKeyDown, onChange } =
+    useEditableNode(data.label);
+
   return (
     // Container
     <div
+      onDoubleClick={onDoubleClick}
       style={{
         width: "120px",
         height: "120px",
@@ -52,18 +57,37 @@ export function DecisionNode({ data }) {
       />
 
       {/* Text inside node */}
-      <div
-        style={{
-          color: "black",
-          padding: "10px",
-          fontSize: "12px",
-          textAlign: "center",
-          maxWidth: "70px",
-          lineHeight: "1.2",
-        }}
-      >
-        {data.label}
-      </div>
+      {isEditing ? (
+        <input
+          value={label}
+          onChange={onChange}
+          onBlur={onBlur}
+          onKeyDown={onKeyDown}
+          autoFocus
+          className="nodrag"
+          size={Math.max(label.length, 1)}
+          style={{
+            color: "black",
+            border: "none",
+            textAlign: "center",
+            outline: "none",
+            background: "transparent",
+          }}
+        />
+      ) : (
+        <div
+          style={{
+            color: "black",
+            padding: "10px",
+            fontSize: "12px",
+            textAlign: "center",
+            maxWidth: "70px",
+            lineHeight: "1.2",
+          }}
+        >
+          {data.label}
+        </div>
+      )}
     </div>
   );
 }
