@@ -1,0 +1,111 @@
+/* CircleNode Styles */
+.circle-node {
+    width: 80px;
+    height: 60px;
+    border: 2px solid #555;
+    border-radius: 50%;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+.circle-node .react-flow__handle {
+    background: #555;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+/* DiamondNode Styles */
+.diamond-node {
+    position: relative;
+    width: 130px;
+    height: 130px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.diamond-shape {
+    width: 90px;
+    height: 90px;
+    background: #fff7ed;
+    border: 2px solid #ea580c;
+
+    transform: rotate(45deg);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.diamond-shape span {
+    transform: rotate(-45deg);
+    font-size: 13px;
+    text-align: center;
+}
+
+/* Adjust Diamond Handles to match the points */
+.diamond-node .react-flow__handle-top { top: -5px; }
+.diamond-node .react-flow__handle-bottom { bottom: -5px; }
+.diamond-node .react-flow__handle-left { left: 20px; } /* Pull in to meet the diamond point */
+.diamond-node .react-flow__handle-right { right: 20px; }
+
+
+/* IONode Styles */
+.io-node {
+    position: relative;
+    width: 110px;
+    height: 60px;
+}
+
+.io-shape {
+    width: 100%;
+    height: 100%;
+    background: #ecfeff;
+    border: 2px solid #0891b2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+
+    transform: skew(-20deg);
+}
+
+.io-shape>* {
+    transform: skew(20deg);
+}
+
+/* Handle adjustment */
+.io-node .react-flow__handle-left {
+    left: -6px;
+}
+
+.io-node .react-flow__handle-right {
+    right: -6px;
+}
+
+/* Adjust IO Handles to match the skewed slant */
+.io-node .react-flow__handle-top { left: 60%; } /* Offset top handle to the right */
+.io-node .react-flow__handle-bottom { left: 40%; } /* Offset bottom handle to the left */
+
+/* TaskNode Styles */
+.task-node {
+    width: 120px;
+    height: 60px;
+    border: 2px solid #555;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+.task-node .react-flow__handle {
+    background: #555;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
