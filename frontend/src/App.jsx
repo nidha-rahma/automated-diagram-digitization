@@ -6,21 +6,19 @@ import ReactFlow, {
   useReactFlow,
   ReactFlowProvider,
   Background,
-  useNodesState, 
-  useEdgesState, 
+  useNodesState,
+  useEdgesState,
   addEdge,
+  MarkerType,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import Sidebar from './components/Sidebar';
-import { MarkerType } from 'reactflow';
 import flowData from './mock/sample_flow.json';
 import { TaskNode, CircleNode, IONode, DiamondNode } from './nodes/CustomNodes';
 import { getLayoutedElements } from './utils/layout';
 import "./App.css";
 
-const initialNodes = [];
-const initialEdges = [];
-
+// --- Node Types Configuration ---
 const nodeTypes = {
   taskNode: TaskNode,
   circleNode: CircleNode,
@@ -28,6 +26,19 @@ const nodeTypes = {
   diamondNode: DiamondNode,
 };
 
+// --- Default Edge Options ---
+const defaultEdgeOptions = {
+  type: 'step',
+  markerEnd: {
+    type: MarkerType.ArrowClosed,
+    width: 20,
+    height: 20,
+    color: '#000',
+  },
+  style: { stroke: '#000' },
+};
+
+// --- Initial Layout Calculation (preserve existing logic) ---
 const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
   flowData.nodes,
   flowData.edges.map(edge => ({
@@ -47,20 +58,15 @@ const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
 );
 
 function FlowCanvas() {
-  const reactFlowWrapper = useRef(null); // Ref to track the canvas container
-  const [nodes, setNodes] = useState(initialNodes);
-  const [edges, setEdges] = useState(initialEdges);
+  const reactFlowWrapper = useRef(null);
+  const [nodes, setNodes, onNodesChange] = useNodesState(layoutedNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(layoutedEdges);
 
   const { screenToFlowPosition } = useReactFlow();
 
-  const onNodesChange = useCallback(
-    (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-    []
-  );
-
-  const onEdgesChange = useCallback(
-    (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-    []
+  const onConnect = useCallback(
+    (params) => setEdges((eds) => addEdge({ ...params, type: 'step', style: { stroke: '#000' }, markerEnd: { type: MarkerType.ArrowClosed, color: '#000' } }, eds)),
+    [setEdges]
   );
 
   const onDragOver = useCallback((event) => {
@@ -73,11 +79,12 @@ function FlowCanvas() {
       event.preventDefault();
 
       const type = event.dataTransfer.getData('application/reactflow');
-      if (!type) return;
 
-      // Calculate position relative to the wrapper
-      //const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-      
+      // check if the dropped element is valid
+      if (typeof type === 'undefined' || !type) {
+        return;
+      }
+
       const position = screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
@@ -87,7 +94,7 @@ function FlowCanvas() {
       const snappedY = Math.round((position.y - 20) / 15) * 15;
 
       const newNode = {
-        id: `node_${Date.now()}`, 
+        id: `node_${Date.now()}`,
         type,
         position: { x: snappedX, y: snappedY },
         data: { label: `${type.toUpperCase()}` },
@@ -95,32 +102,28 @@ function FlowCanvas() {
 
       setNodes((nds) => nds.concat(newNode));
     },
-    [screenToFlowPosition]
+    [screenToFlowPosition, setNodes],
   );
 
-  const onClear = () => {
-    setNodes([]);
-    setEdges([]);
-  };
-
-return (
+  return (
     <div style={{ display: 'flex', height: '100vh', width: '100vw' }}>
       <Sidebar />
-        
-
-      {/* Wrapper is essential for coordinate math */}
-      <div ref={reactFlowWrapper} style={{ flex: 1, height: '100%' }}>
+      <div className="reactflow-wrapper" ref={reactFlowWrapper} style={{ flex: 1, height: '100%' }}>
         <ReactFlow
           nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          nodeTypes={nodeTypes}
           onDragOver={onDragOver}
           onDrop={onDrop}
+          defaultEdgeOptions={defaultEdgeOptions}
           snapToGrid={true}
           snapGrid={[15, 15]}
+          fitView
         >
-          <Background variant="dots" gap={15} size={1} />
+          <Background variant="dots" gap={12} size={1} />
           <Controls />
         </ReactFlow>
       </div>
@@ -135,29 +138,3 @@ export default function App() {
     </ReactFlowProvider>
   );
 }
-function App() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(layoutedNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(layoutedEdges);
-
-  const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
-  );
-
-  return (
-    <div style={{ width: "100vw", height: "100vh" }}>
-      <h2 style={{ textAlign: "center" }}>Flowchart Canvas</h2>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        fitView
-        nodeTypes={nodeTypes}
-      />
-    </div>
-  );
-}
-
-export default App;
