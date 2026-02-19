@@ -80,7 +80,7 @@ export const useFlowchart = () => {
             const snappedY = Math.round((position.y - 20) / 15) * 15;
 
             const newNode = {
-                id: `node_${Date.now()}`,
+                id: `node_${crypto.randomUUID()}`,
                 type,
                 position: { x: snappedX, y: snappedY },
                 data: { label: `${type.toUpperCase()}` },
