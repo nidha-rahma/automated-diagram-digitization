@@ -9,133 +9,133 @@
       },
       "data": {
         "label": "Start"
-      }
+      },
+      "width": 100,
+      "height": 80
     },
     {
       "id": "2",
       "type": "ioNode",
       "position": {
-        "x": 450,
-        "y": 150
+        "x": 420,
+        "y": 200
       },
       "data": {
         "label": "Read\nTemperature"
-      }
+      },
+      "width": 160,
+      "height": 80
     },
     {
       "id": "3",
       "type": "diamondNode",
       "position": {
-        "x": 450,
-        "y": 250
+        "x": 400,
+        "y": 350
       },
       "data": {
-        "label": "Temperature <32 ?"
-      }
+        "label": "Temperature <32?"
+      },
+      "width": 120,
+      "height": 120
     },
     {
       "id": "4",
       "type": "ioNode",
       "position": {
-        "x": 150,
-        "y": 350
+        "x": 100,
+        "y": 550
       },
       "data": {
         "label": "Print\n\"Below Freezing\""
-      }
+      },
+      "width": 160,
+      "height": 80
     },
     {
       "id": "5",
       "type": "ioNode",
       "position": {
-        "x": 750,
-        "y": 350
+        "x": 700,
+        "y": 550
       },
       "data": {
         "label": "Print\n\"Above Freezing\""
-      }
+      },
+      "width": 160,
+      "height": 80
     },
     {
       "id": "6",
       "type": "circleNode",
       "position": {
         "x": 450,
-        "y": 450
+        "y": 750
       },
       "data": {
         "label": "End"
-      }
+      },
+      "width": 100,
+      "height": 80
     }
   ],
   "edges": [
     {
-      "id": "e0",
+      "id": "e1-2",
       "source": "1",
       "target": "2",
       "label": "",
-      "type": "step",
-      "sourceHandle": "out",
-      "targetHandle": "in",
+      "type": "smoothstep",
       "markerEnd": {
         "type": "arrowclosed"
       }
     },
     {
-      "id": "e1",
+      "id": "e2-3",
       "source": "2",
       "target": "3",
       "label": "",
-      "type": "step",
-      "sourceHandle": "out",
-      "targetHandle": "in",
+      "type": "smoothstep",
       "markerEnd": {
         "type": "arrowclosed"
       }
     },
     {
-      "id": "e2",
+      "id": "e3-4",
       "source": "3",
       "target": "4",
       "label": "YES",
-      "type": "step",
-      "sourceHandle": "yes",
-      "targetHandle": "in",
+      "type": "smoothstep",
       "markerEnd": {
         "type": "arrowclosed"
       }
     },
     {
-      "id": "e3",
+      "id": "e3-5",
       "source": "3",
       "target": "5",
       "label": "NO",
-      "type": "step",
-      "sourceHandle": "no",
-      "targetHandle": "in",
+      "type": "smoothstep",
       "markerEnd": {
         "type": "arrowclosed"
       }
     },
     {
-      "id": "e4",
+      "id": "e4-6",
       "source": "4",
       "target": "6",
       "label": "",
-      "type": "step",
-      "sourceHandle": "out",
-      "targetHandle": "left",
+      "type": "smoothstep",
       "markerEnd": {
         "type": "arrowclosed"
       }
     },
     {
-      "id": "e5",
+      "id": "e5-6",
       "source": "5",
       "target": "6",
       "label": "",
-      "type": "step",
-      "sourceHandle": "out",
-      "targetHandle": "right",
+      "type": "smoothstep",
       "markerEnd": {
         "type": "arrowclosed"
       }
