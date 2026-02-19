@@ -22,7 +22,7 @@ client = genai.Client(api_key=os.getenv('GEMINI_API_KEY'))
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware, 
-    allow_origins=["*"], 
+    allow_origins=["http://localhost:5173"], # Replace with frontend URL
     allow_methods=["*"], 
     allow_headers=["*"]
 )
@@ -36,7 +36,9 @@ class Node(BaseModel):
     id: str
     type: str
     position: Position
-    data: dict 
+    data: dict
+    width: Optional[int] = 150
+    height: Optional[int] = 80 
 
 class Edge(BaseModel):
     id: str
