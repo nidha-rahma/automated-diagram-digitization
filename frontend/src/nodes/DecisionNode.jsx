@@ -1,8 +1,8 @@
 import React from "react";
-import { Handle, Position } from "reactflow";
+import { Handle, Position, NodeResizer } from "reactflow";
 import { useEditableNode } from "../hooks/useEditableNodes";
 
-export function DecisionNode({ data }) {
+export function DecisionNode({ id, data, selected }) {
   const { isEditing, label, onDoubleClick, onBlur, onKeyDown, onChange } =
     useEditableNode(data.label);
 
@@ -11,13 +11,24 @@ export function DecisionNode({ data }) {
     <div
       onDoubleClick={onDoubleClick}
       style={{
-        width: "120px",
-        height: "120px",
+        minWidth: "120px",
+        minHeight: "120px",
+        width: "100%",
+        height: "100%",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        position: "relative",
       }}
     >
+      <NodeResizer
+        nodeId={id}
+        color="#0052cc"
+        isVisible={selected}
+        minWidth={100}
+        minHeight={100}
+      />
+
       {/* Shape (actual diamond) */}
       <div
         style={{

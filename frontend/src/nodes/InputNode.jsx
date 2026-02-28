@@ -1,8 +1,8 @@
 import React from "react";
-import { Handle, Position, NodeResizer } from "reactflow";
+import { Handle, NodeResizer, Position } from "reactflow";
 import { useEditableNode } from "../hooks/useEditableNodes";
 
-export function ProcessNode({ id, data, selected }) {
+export function InputNode({ id, data, selected }) {
   const { isEditing, label, onDoubleClick, onBlur, onKeyDown, onChange } =
     useEditableNode(data.label);
 
@@ -11,19 +11,16 @@ export function ProcessNode({ id, data, selected }) {
     <div
       onDoubleClick={onDoubleClick}
       style={{
-        padding: "10px 20px",
-        border: "1px solid #777",
-        borderRadius: "2px",
-        background: "white",
+        position: "relative",
         minWidth: "80px",
         minHeight: "40px",
         width: "100%",
         height: "100%",
+        boxSizing: "border-box",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        position: "relative",
-        boxSizing: "border-box",
+        padding: "10px 20px",
       }}
     >
       <NodeResizer
@@ -32,6 +29,23 @@ export function ProcessNode({ id, data, selected }) {
         isVisible={selected}
         minWidth={80}
         minHeight={40}
+      />
+
+      <div
+        onDoubleClick={onDoubleClick}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "white",
+          border: "1px solid #777",
+          borderRadius: "2px",
+          transform: "skewX(-20deg)",
+          zIndex: -1,
+          pointerEvents: "none",
+        }}
       />
 
       {/*Handles (one of each corner) */}
@@ -57,26 +71,29 @@ export function ProcessNode({ id, data, selected }) {
       />
 
       {/* Text inside node */}
-      {isEditing ? (
-        <input
-          value={label}
-          onChange={onChange}
-          onBlur={onBlur}
-          onKeyDown={onKeyDown}
-          autoFocus
-          className="nodrag"
-          size={Math.max(label.length, 1)}
-          style={{
-            color: "black",
-            border: "none",
-            textAlign: "center",
-            outline: "none",
-            background: "transparent",
-          }}
-        />
-      ) : (
-        <div style={{ color: "black" }}>{label}</div>
-      )}
+      <div>
+        {isEditing ? (
+          <input
+            value={label}
+            onChange={onChange}
+            onBlur={onBlur}
+            onKeyDown={onKeyDown}
+            autoFocus
+            className="nodrag"
+            size={Math.max(label.length, 1)}
+            style={{
+              color: "black",
+              border: "none",
+              textAlign: "center",
+              outline: "none",
+              background: "transparent",
+              width: "100%",
+            }}
+          />
+        ) : (
+          <div style={{ color: "black" }}>{label}</div>
+        )}
+      </div>
     </div>
   );
 }

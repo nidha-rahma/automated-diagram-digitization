@@ -1,8 +1,8 @@
 import React from "react";
-import { Handle, Position } from "reactflow";
+import { Handle, Position, NodeResizer } from "reactflow";
 import { useEditableNode } from "../hooks/useEditableNodes";
 
-export function StartNode({ data }) {
+export function StartNode({ id, data, selected }) {
   const { isEditing, label, onDoubleClick, onBlur, onKeyDown, onChange } =
     useEditableNode(data.label);
 
@@ -16,9 +16,23 @@ export function StartNode({ data }) {
         borderRadius: "50px",
         background: "white",
         minWidth: "80px",
-        textAlign: "center",
+        minHeight: "40px",
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        position: "relative",
       }}
     >
+      <NodeResizer
+        nodeId={id}
+        color="#555"
+        isVisible={selected}
+        minWidth={80}
+        minHeight={40}
+      />
+
       {/* Input handle */}
       <Handle
         type="target"
