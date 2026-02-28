@@ -6,29 +6,34 @@ import {
   useReactFlow,
   MarkerType,
 } from "reactflow";
-import flowData from "../../mock/loop_flow.json";
-import { getLayoutedElements } from "../../utils/layout";
+import flowData from "../../mock/loop_flow3.json";
 
-// Sort the edges based on the target node's original X position
-// This tells the dagre layout engine the correct left-to-right order
-const sortedEdges = [...flowData.edges].sort((edgeA, edgeB) => {
-  const targetNodeA = flowData.nodes.find((n) => n.id === edgeA.target);
-  const targetNodeB = flowData.nodes.find((n) => n.id === edgeB.target);
+// Column snapping - assigning specific columns to nodes based on their X value
+const snapToColumns = (nodes) => {
+  return nodes.map((node) => {
+    const isLeftColumn = node.position.x < 350;
+    const targetCenterX = isLeftColumn ? 250 : 550;
+    const nodeWidth = node.width || 120; // fallback
+    const centeredX = targetCenterX - node.width / 2;
 
-  if (targetNodeA && targetNodeB) {
-    return targetNodeA.position.x - targetNodeB.position.x;
-  }
-  return 0;
-});
+    return {
+      ...node,
+      position: {
+        x: centeredX,
+        y: node.position.y,
+      },
+    };
+  });
+};
 
-// Initial Layout Calculation
-const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
-  flowData.nodes,
-  sortedEdges.map((edge) => ({
+// Map edges using json
+const initialEdges = flowData.edges.map((edge) => {
+  const isVerticalDrop =
+    edge.sourceHandle === "bottom" && edge.targetHandle === "top";
+
+  return {
     ...edge,
-    sourceHandle: edge.sourceHandle || "bottom",
-    targetHandle: edge.targetHandle || "top",
-    type: "step",
+    type: isVerticalDrop ? "straight" : "smoothstep",
     markerEnd: {
       type: MarkerType.ArrowClosed,
       width: 20,
@@ -36,21 +41,25 @@ const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
       color: "#fff",
     },
     style: { stroke: "#fff" },
-  })),
-);
+  };
+});
+
+const alignedNodes = snapToColumns(flowData.nodes);
 
 export const useFlowchart = () => {
-  const [nodes, setNodes, onNodesChange] = useNodesState(layoutedNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(layoutedEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState(alignedNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const { screenToFlowPosition } = useReactFlow();
 
   const onConnect = useCallback(
-    (params) =>
+    (params) => {
+      const isVerticalDrop =
+        params.sourceHandle === "bottom" && params.targetHandle === "top";
       setEdges((eds) =>
         addEdge(
           {
             ...params,
-            type: "step",
+            type: isVerticalDrop ? "straight" : "smoothstep",
             style: { stroke: "#fff" },
             markerEnd: {
               type: MarkerType.ArrowClosed,
@@ -59,7 +68,8 @@ export const useFlowchart = () => {
           },
           eds,
         ),
-      ),
+      );
+    },
     [setEdges],
   );
 
@@ -71,24 +81,18 @@ export const useFlowchart = () => {
   const onDrop = useCallback(
     (event) => {
       event.preventDefault();
-
       const type = event.dataTransfer.getData("application/reactflow");
-
-      if (typeof type === "undefined" || !type) {
-        return;
-      }
+      if (!type) return;
 
       const position = screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
       });
-
       const snappedX = Math.round((position.x - 75) / 15) * 15;
       const snappedY = Math.round((position.y - 20) / 15) * 15;
 
-      let defaultW = 120;
-      let defaultH = 60;
-
+      let defaultW = 120,
+        defaultH = 60;
       if (type === "decision") {
         defaultW = 120;
         defaultH = 120;
