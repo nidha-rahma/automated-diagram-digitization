@@ -1,20 +1,23 @@
-import { MarkerType } from 'reactflow';
-import { TaskNode, CircleNode, IONode, DiamondNode } from '../../nodes/CustomNodes';
+import { MarkerType } from "reactflow";
+import { ProcessNode } from "../../nodes/ProcessNode";
+import { StartNode } from "../../nodes/StartNode";
+import { DecisionNode } from "../../nodes/DecisionNode";
+import { InputNode } from "../../nodes/InputNode";
 
 export const nodeTypes = {
-    taskNode: TaskNode,
-    circleNode: CircleNode,
-    ioNode: IONode,
-    diamondNode: DiamondNode,
+  process: ProcessNode,
+  start: StartNode,
+  io: InputNode,
+  decision: DecisionNode,
 };
 
 export const defaultEdgeOptions = {
-    type: 'step',
-    markerEnd: {
-        type: MarkerType.ArrowClosed,
-        width: 20,
-        height: 20,
-        color: '#000',
-    },
-    style: { stroke: '#000' },
+  type: "step",
+  markerEnd: {
+    type: MarkerType.ArrowClosed,
+    width: 20,
+    height: 20,
+    color: "#000",
+  },
+  style: { stroke: "#000" },
 };

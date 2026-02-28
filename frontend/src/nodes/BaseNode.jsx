@@ -42,22 +42,26 @@ export function BaseNode({
 
       {/*Handles (one of each corner) */}
       <Handle
+        id="in"
         type="target"
         position={Position.Top}
         style={{ background: "#555" }}
       />
       <Handle
+        id="out"
         type="source"
         position={Position.Bottom}
         style={{ background: "#555" }}
       />
       <Handle
+        id="yes"
         type="source"
         position={Position.Left}
         style={{ background: "#555" }}
       />
       <Handle
-        type="target"
+        id="no"
+        type="source"
         position={Position.Right}
         style={{ background: "#555" }}
       />
