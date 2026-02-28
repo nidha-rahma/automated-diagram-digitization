@@ -6,29 +6,36 @@ import {
   useReactFlow,
   MarkerType,
 } from "reactflow";
-import flowData from "../../mock/sample_flow.json";
+import flowData from "../../mock/loop_flow.json";
 import { getLayoutedElements } from "../../utils/layout";
+
+// Sort the edges based on the target node's original X position
+// This tells the dagre layout engine the correct left-to-right order
+const sortedEdges = [...flowData.edges].sort((edgeA, edgeB) => {
+  const targetNodeA = flowData.nodes.find((n) => n.id === edgeA.target);
+  const targetNodeB = flowData.nodes.find((n) => n.id === edgeB.target);
+
+  if (targetNodeA && targetNodeB) {
+    return targetNodeA.position.x - targetNodeB.position.x;
+  }
+  return 0;
+});
 
 // Initial Layout Calculation
 const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
   flowData.nodes,
-  flowData.edges.map((edge) => ({
+  sortedEdges.map((edge) => ({
     ...edge,
-    sourceHandle:
-      edge.label?.toUpperCase() === "YES"
-        ? "yes"
-        : edge.label?.toUpperCase() === "NO"
-          ? "no"
-          : "out",
-    targetHandle: "in",
+    sourceHandle: edge.sourceHandle || "bottom",
+    targetHandle: edge.targetHandle || "top",
     type: "step",
     markerEnd: {
       type: MarkerType.ArrowClosed,
       width: 20,
       height: 20,
-      color: "#000",
+      color: "#fff",
     },
-    style: { stroke: "#000" },
+    style: { stroke: "#fff" },
   })),
 );
 
@@ -44,10 +51,10 @@ export const useFlowchart = () => {
           {
             ...params,
             type: "step",
-            style: { stroke: "#000" },
+            style: { stroke: "#fff" },
             markerEnd: {
               type: MarkerType.ArrowClosed,
-              color: "#000",
+              color: "#fff",
             },
           },
           eds,
