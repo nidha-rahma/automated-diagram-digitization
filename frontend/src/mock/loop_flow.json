@@ -1,0 +1,231 @@
+{
+  "nodes": [
+    {
+      "id": "1",
+      "type": "start",
+      "position": {
+        "x": 200,
+        "y": 100
+      },
+      "data": {
+        "label": "Start"
+      },
+      "width": 100,
+      "height": 80
+    },
+    {
+      "id": "2",
+      "type": "io",
+      "position": {
+        "x": 200,
+        "y": 250
+      },
+      "data": {
+        "label": "input\nnumber"
+      },
+      "width": 160,
+      "height": 80
+    },
+    {
+      "id": "3",
+      "type": "decision",
+      "position": {
+        "x": 200,
+        "y": 400
+      },
+      "data": {
+        "label": "is\nnumber ≥ 0\n?"
+      },
+      "width": 120,
+      "height": 120
+    },
+    {
+      "id": "4",
+      "type": "process",
+      "position": {
+        "x": 450,
+        "y": 400
+      },
+      "data": {
+        "label": "average =\ntotal / count"
+      },
+      "width": 150,
+      "height": 80
+    },
+    {
+      "id": "5",
+      "type": "process",
+      "position": {
+        "x": 200,
+        "y": 550
+      },
+      "data": {
+        "label": "total =\ntotal + number"
+      },
+      "width": 150,
+      "height": 80
+    },
+    {
+      "id": "6",
+      "type": "process",
+      "position": {
+        "x": 200,
+        "y": 700
+      },
+      "data": {
+        "label": "count = count+1"
+      },
+      "width": 150,
+      "height": 80
+    },
+    {
+      "id": "7",
+      "type": "io",
+      "position": {
+        "x": 200,
+        "y": 850
+      },
+      "data": {
+        "label": "input\nnumber"
+      },
+      "width": 160,
+      "height": 80
+    },
+    {
+      "id": "8",
+      "type": "io",
+      "position": {
+        "x": 450,
+        "y": 550
+      },
+      "data": {
+        "label": "output\ntotal\ncount\naverage"
+      },
+      "width": 160,
+      "height": 80
+    },
+    {
+      "id": "9",
+      "type": "start",
+      "position": {
+        "x": 450,
+        "y": 700
+      },
+      "data": {
+        "label": "End"
+      },
+      "width": 100,
+      "height": 80
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1-2",
+      "source": "1",
+      "target": "2",
+      "label": "",
+      "sourceHandle": "bottom",
+      "targetHandle": "top",
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      }
+    },
+    {
+      "id": "e2-3",
+      "source": "2",
+      "target": "3",
+      "label": "",
+      "sourceHandle": "bottom",
+      "targetHandle": "top",
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      }
+    },
+    {
+      "id": "e3-4",
+      "source": "3",
+      "target": "4",
+      "label": "no",
+      "sourceHandle": "right",
+      "targetHandle": "left",
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      }
+    },
+    {
+      "id": "e3-5",
+      "source": "3",
+      "target": "5",
+      "label": "yes",
+      "sourceHandle": "bottom",
+      "targetHandle": "top",
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      }
+    },
+    {
+      "id": "e4-8",
+      "source": "4",
+      "target": "8",
+      "label": "",
+      "sourceHandle": "bottom",
+      "targetHandle": "top",
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      }
+    },
+    {
+      "id": "e5-6",
+      "source": "5",
+      "target": "6",
+      "label": "",
+      "sourceHandle": "bottom",
+      "targetHandle": "top",
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      }
+    },
+    {
+      "id": "e6-7",
+      "source": "6",
+      "target": "7",
+      "label": "",
+      "sourceHandle": "bottom",
+      "targetHandle": "top",
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      }
+    },
+    {
+      "id": "e7-3",
+      "source": "7",
+      "target": "3",
+      "label": "",
+      "sourceHandle": "bottom",
+      "targetHandle": "left",
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      }
+    },
+    {
+      "id": "e8-9",
+      "source": "8",
+      "target": "9",
+      "label": "",
+      "sourceHandle": "bottom",
+      "targetHandle": "top",
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      }
+    }
+  ]
+}
