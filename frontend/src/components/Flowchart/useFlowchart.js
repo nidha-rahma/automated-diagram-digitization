@@ -6,18 +6,32 @@ import {
   useReactFlow,
   MarkerType,
 } from "reactflow";
-import flowData from "../../mock/loop_flow3.json";
+import flowData from "../../mock/loop_flow.json";
 
 // Column snapping - assigning specific columns to nodes based on their X value
-const snapToColumns = (nodes) => {
+const normaliseAndSnap = (nodes) => {
+  const maxWidths = {
+    start: 100,
+    process: 120,
+    io: 140,
+    decision: 120,
+  };
+
+  nodes.forEach((node) => {
+    if (node.width && node.width > maxWidths[node.type]) {
+      maxWidths[node.type] = node.width;
+    }
+  });
+
   return nodes.map((node) => {
     const isLeftColumn = node.position.x < 350;
     const targetCenterX = isLeftColumn ? 250 : 550;
-    const nodeWidth = node.width || 120; // fallback
-    const centeredX = targetCenterX - node.width / 2;
+    const finalWidth = maxWidths[node.type];
+    const centeredX = targetCenterX - finalWidth / 2;
 
     return {
       ...node,
+      style: { ...node.style, width: finalWidth },
       position: {
         x: centeredX,
         y: node.position.y,
@@ -44,7 +58,7 @@ const initialEdges = flowData.edges.map((edge) => {
   };
 });
 
-const alignedNodes = snapToColumns(flowData.nodes);
+const alignedNodes = normaliseAndSnap(flowData.nodes);
 
 export const useFlowchart = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(alignedNodes);
