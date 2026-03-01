@@ -8,24 +8,55 @@ import {
 } from "reactflow";
 import flowData from "../../mock/loop_flow.json";
 
-// Column snapping - assigning specific columns to nodes based on their X value
+// Dynamic column snapping (1D Clustering)
+// Assigning specific columns to nodes based on their X value
 const normaliseAndSnap = (nodes) => {
   const maxWidths = {
     start: 100,
-    process: 120,
-    io: 140,
+    process: 150,
+    io: 150,
     decision: 120,
   };
 
   nodes.forEach((node) => {
+    // Update maxWidths with maximum width of each node
     if (node.width && node.width > maxWidths[node.type]) {
       maxWidths[node.type] = node.width;
     }
   });
 
+  const TOLERANCE = 100;
+  const columns = [];
+
+  // Sort nodes based on X value
+  const sortedNodes = [...nodes].sort((a, b) => a.position.x - b.position.x);
+
+  sortedNodes.forEach((node) => {
+    const x = node.position.x;
+
+    // Checks if node belongs to an existing column
+    const existingCol = columns.find(
+      (col) => Math.abs(col.averageX - x) < TOLERANCE,
+    );
+
+    if (existingCol) {
+      // Add node to exisitng cols
+      existingCol.xValues.push(x);
+      existingCol.averageX =
+        existingCol.xValues.reduce((sum, val) => sum + val, 0) /
+        existingCol.xValues.length;
+    } else {
+      // Create new col
+      columns.push({ xValues: [x], averageX: [x] });
+    }
+  });
+
   return nodes.map((node) => {
-    const isLeftColumn = node.position.x < 350;
-    const targetCenterX = isLeftColumn ? 250 : 550;
+    const myColumn = columns.find(
+      (col) => Math.abs(col.averageX - node.position.x) < TOLERANCE,
+    );
+
+    const targetCenterX = myColumn.averageX;
     const finalWidth = maxWidths[node.type];
     const centeredX = targetCenterX - finalWidth / 2;
 
