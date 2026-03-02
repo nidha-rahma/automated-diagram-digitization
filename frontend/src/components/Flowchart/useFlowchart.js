@@ -19,8 +19,10 @@ const normaliseAndSnap = (nodes) => {
   };
 
   nodes.forEach((node) => {
+    const nodeWidth =
+      node.width || (node.style && node.style.width) || maxWidths[node.type];
     // Update maxWidths with maximum width of each node
-    if (node.width && node.width > maxWidths[node.type]) {
+    if (nodeWidth > maxWidths[node.type]) {
       maxWidths[node.type] = node.width;
     }
   });
@@ -96,6 +98,17 @@ export const useFlowchart = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const { screenToFlowPosition } = useReactFlow();
 
+  const applyAutoLayout = useCallback(() => {
+    setNodes((currentNodes) => normaliseAndSnap(currentNodes));
+    setEdges((currentEdges) =>
+      currentEdges.map((edge) => {
+        const isVerticalDrop =
+          edge.sourceHandle === "bottom" && edge.targetHandle === "top";
+        return { ...edge, type: isVerticalDrop ? "straight" : "smoothstep" };
+      }),
+    );
+  }, [setNodes, setEdges]);
+
   const onConnect = useCallback(
     (params) => {
       const isVerticalDrop =
@@ -170,5 +183,6 @@ export const useFlowchart = () => {
     onConnect,
     onDragOver,
     onDrop,
+    applyAutoLayout,
   };
 };

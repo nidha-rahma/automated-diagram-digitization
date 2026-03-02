@@ -4,6 +4,7 @@ import ReactFlow, {
   ReactFlowProvider,
   Background,
   ConnectionMode,
+  Panel,
 } from "reactflow";
 import "reactflow/dist/style.css";
 
@@ -22,6 +23,7 @@ function FlowCanvas() {
     onConnect,
     onDragOver,
     onDrop,
+    applyAutoLayout,
   } = useFlowchart();
 
   return (
@@ -49,6 +51,24 @@ function FlowCanvas() {
         >
           <Background variant="dots" gap={12} size={1} />
           <Controls />
+
+          <Panel position="bottom right">
+            <button
+              onClick={applyAutoLayout}
+              style={{
+                padding: "10px 15px",
+                background: "#555",
+                color: "white",
+                borderRadius: "5px",
+                cursor: "pointer",
+                fontWeight: "bold",
+                boxShadow: "0 2px 4px rgba(0, 0, 0, 0, 2)",
+              }}
+            >
+              {" "}
+              Auto Layout
+            </button>
+          </Panel>
         </ReactFlow>
       </div>
     </div>
