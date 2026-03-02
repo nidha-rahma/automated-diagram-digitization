@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
   useNodesState,
   useEdgesState,
@@ -226,6 +226,34 @@ export const useFlowchart = () => {
     },
     [screenToFlowPosition, setNodes, takeSnapShot],
   );
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (
+        event.target.tagName === "INPUT" ||
+        event.target.tagName === "TEXTAREA"
+      ) {
+        return;
+      }
+
+      if (event.ctrlKey) {
+        if (event.key.toLowerCase() === "z") {
+          if (event.shiftKey) {
+            event.preventDefault();
+            redo();
+          } else {
+            event.preventDefault();
+            undo();
+          }
+        } else if (event.key.toLowerCase() === "y") {
+          redo();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [undo, redo]);
 
   return {
     nodes,
