@@ -23,51 +23,59 @@ const normaliseAndSnap = (nodes) => {
       node.width || (node.style && node.style.width) || maxWidths[node.type];
     // Update maxWidths with maximum width of each node
     if (nodeWidth > maxWidths[node.type]) {
-      maxWidths[node.type] = node.width;
+      maxWidths[node.type] = nodeWidth;
     }
   });
 
-  const TOLERANCE = 100;
+  const TOLERANCE = 150;
   const columns = [];
 
+  const nodesWithCenters = nodes.map((node) => {
+    const finalWidth = maxWidths[node.type];
+    const trueCenterX = node.position.x + finalWidth / 2;
+    return { ...node, trueCenterX, finalWidth };
+  });
+
   // Sort nodes based on X value
-  const sortedNodes = [...nodes].sort((a, b) => a.position.x - b.position.x);
+  const sortedNodes = [...nodesWithCenters].sort(
+    (a, b) => a.trueCenterX - b.trueCenterX,
+  );
 
   sortedNodes.forEach((node) => {
-    const x = node.position.x;
+    const cx = node.trueCenterX;
 
     // Checks if node belongs to an existing column
     const existingCol = columns.find(
-      (col) => Math.abs(col.averageX - x) < TOLERANCE,
+      (col) => Math.abs(col.averageCenterX - cx) < TOLERANCE,
     );
 
     if (existingCol) {
       // Add node to exisitng cols
-      existingCol.xValues.push(x);
-      existingCol.averageX =
-        existingCol.xValues.reduce((sum, val) => sum + val, 0) /
-        existingCol.xValues.length;
+      existingCol.centerValues.push(cx);
+      existingCol.averageCenterX =
+        existingCol.centerValues.reduce((sum, val) => sum + val, 0) /
+        existingCol.centerValues.length;
     } else {
       // Create new col
-      columns.push({ xValues: [x], averageX: [x] });
+      columns.push({ centerValues: [cx], averageCenterX: cx });
     }
   });
 
-  return nodes.map((node) => {
+  return nodesWithCenters.map((node) => {
     const myColumn = columns.find(
-      (col) => Math.abs(col.averageX - node.position.x) < TOLERANCE,
+      (col) => Math.abs(col.averageCenterX - node.trueCenterX) < TOLERANCE,
     );
 
-    const targetCenterX = myColumn.averageX;
-    const finalWidth = maxWidths[node.type];
-    const centeredX = targetCenterX - finalWidth / 2;
+    const targetCenterX = myColumn.averageCenterX;
+    const centeredX = targetCenterX - node.finalWidth / 2;
+    const { trueCenterX, finalWidth, ...cleanNode } = node;
 
     return {
-      ...node,
-      style: { ...node.style, width: finalWidth },
+      ...cleanNode,
+      style: { ...cleanNode.style, width: node.finalWidth },
       position: {
         x: centeredX,
-        y: node.position.y,
+        y: cleanNode.position.y,
       },
     };
   });
