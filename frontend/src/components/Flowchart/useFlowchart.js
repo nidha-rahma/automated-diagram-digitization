@@ -106,7 +106,48 @@ export const useFlowchart = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const { screenToFlowPosition } = useReactFlow();
 
+  // History State
+  const [past, setPast] = useState([]);
+  const [future, setFuture] = useState([]);
+
+  const takeSnapShot = useCallback(() => {
+    const nodesCopy = JSON.parse(JSON.stringify(nodes));
+    const edgesCopy = JSON.parse(JSON.stringify(edges));
+
+    setPast((p) => [...p, { nodes: nodesCopy, edges: edgesCopy }]);
+    setFuture([]);
+  }, [nodes, edges]);
+
+  const undo = useCallback(() => {
+    if (past.length === 0) return;
+    const prevState = past[past.length - 1];
+
+    const nodesCopy = JSON.parse(JSON.stringify(nodes));
+    const edgesCopy = JSON.parse(JSON.stringify(edges));
+
+    setFuture((f) => [{ nodes: nodesCopy, edges: edgesCopy }, ...f]);
+    setPast((p) => p.slice(0, p.length - 1));
+
+    setNodes(prevState.nodes);
+    setEdges(prevState.edges);
+  }, [nodes, edges, past, setNodes, setEdges]);
+
+  const redo = useCallback(() => {
+    if (future.length === 0) return;
+    const nextState = future[0];
+
+    const nodesCopy = JSON.parse(JSON.stringify(nodes));
+    const edgesCopy = JSON.parse(JSON.stringify(edges));
+
+    setPast((p) => [...p, { nodes: nodesCopy, edges: edgesCopy }]);
+    setFuture((f) => f.slice(1));
+
+    setNodes(nextState.nodes);
+    setEdges(nextState.edges);
+  }, [nodes, edges, future, setNodes, setEdges]);
+
   const applyAutoLayout = useCallback(() => {
+    takeSnapShot();
     setNodes((currentNodes) => normaliseAndSnap(currentNodes));
     setEdges((currentEdges) =>
       currentEdges.map((edge) => {
@@ -115,10 +156,11 @@ export const useFlowchart = () => {
         return { ...edge, type: isVerticalDrop ? "straight" : "smoothstep" };
       }),
     );
-  }, [setNodes, setEdges]);
+  }, [setNodes, setEdges, takeSnapShot]);
 
   const onConnect = useCallback(
     (params) => {
+      takeSnapShot();
       const isVerticalDrop =
         params.sourceHandle === "bottom" && params.targetHandle === "top";
       setEdges((eds) =>
@@ -136,7 +178,7 @@ export const useFlowchart = () => {
         ),
       );
     },
-    [setEdges],
+    [setEdges, takeSnapShot],
   );
 
   const onDragOver = useCallback((event) => {
@@ -149,6 +191,8 @@ export const useFlowchart = () => {
       event.preventDefault();
       const type = event.dataTransfer.getData("application/reactflow");
       if (!type) return;
+
+      takeSnapShot();
 
       const position = screenToFlowPosition({
         x: event.clientX,
@@ -180,7 +224,7 @@ export const useFlowchart = () => {
 
       setNodes((nds) => nds.concat(newNode));
     },
-    [screenToFlowPosition, setNodes],
+    [screenToFlowPosition, setNodes, takeSnapShot],
   );
 
   return {
@@ -192,5 +236,10 @@ export const useFlowchart = () => {
     onDragOver,
     onDrop,
     applyAutoLayout,
+    undo,
+    redo,
+    past,
+    future,
+    takeSnapShot,
   };
 };

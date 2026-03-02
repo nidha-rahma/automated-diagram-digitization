@@ -13,6 +13,8 @@ import { nodeTypes, defaultEdgeOptions } from "./flowConfig";
 import Sidebar from "../Sidebar";
 import "../../App.css";
 
+import { MdUndo, MdRedo } from "react-icons/md";
+
 function FlowCanvas() {
   const reactFlowWrapper = useRef(null);
   const {
@@ -24,7 +26,28 @@ function FlowCanvas() {
     onDragOver,
     onDrop,
     applyAutoLayout,
+    undo,
+    redo,
+    past,
+    future,
+    takeSnapShot,
   } = useFlowchart();
+
+  const circleButtonStyle = {
+    width: "40px",
+    height: "40px",
+    borderRadius: "50%",
+    border: "1px solid #ddd",
+    padding: 0,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    background: "white",
+    color: "#333",
+    fontSize: "20px",
+    boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+    transition: "all 0.2s ease",
+  };
 
   return (
     <div style={{ display: "flex", height: "100vh", width: "100vw" }}>
@@ -44,6 +67,9 @@ function FlowCanvas() {
           nodeTypes={nodeTypes}
           onDragOver={onDragOver}
           onDrop={onDrop}
+          onNodeDragStart={takeSnapShot}
+          onNodesDelete={takeSnapShot}
+          onEdgesDelete={takeSnapShot}
           defaultEdgeOptions={defaultEdgeOptions}
           snapToGrid={true}
           snapGrid={[15, 15]}
@@ -51,6 +77,40 @@ function FlowCanvas() {
         >
           <Background variant="dots" gap={12} size={1} />
           <Controls />
+
+          <Panel
+            position="top right"
+            style={{
+              display: "flex",
+              gap: "10px",
+              alignItems: "center",
+            }}
+          >
+            <button
+              onClick={undo}
+              disabled={past.length === 0}
+              title="Undo"
+              style={{
+                ...circleButtonStyle,
+                cursor: past.length === 0 ? "not-allowed" : "pointer",
+                opacity: past.length === 0 ? 0.5 : 1,
+              }}
+            >
+              <MdUndo size={22} color="black" />
+            </button>
+            <button
+              onClick={redo}
+              disabled={future.length === 0}
+              title="Redo"
+              style={{
+                ...circleButtonStyle,
+                cursor: future.length === 0 ? "not-allowed" : "pointer",
+                opacity: future.length === 0 ? 0.5 : 1,
+              }}
+            >
+              <MdRedo size={22} color="black" />
+            </button>
+          </Panel>
 
           <Panel position="bottom right">
             <button
