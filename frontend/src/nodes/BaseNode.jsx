@@ -11,7 +11,7 @@ export function BaseNode({
   minH = 40,
 }) {
   const { isEditing, label, onDoubleClick, onBlur, onKeyDown, onChange } =
-    useEditableNode(data.label);
+    useEditableNode(id, data.label);
 
   return (
     // Container

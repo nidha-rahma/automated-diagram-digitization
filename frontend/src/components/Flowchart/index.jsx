@@ -14,6 +14,7 @@ import Sidebar from "../Sidebar";
 import "../../App.css";
 
 import { MdUndo, MdRedo } from "react-icons/md";
+import { HistoryContext } from "../../hooks/HistoryContext";
 
 function FlowCanvas() {
   const reactFlowWrapper = useRef(null);
@@ -57,79 +58,81 @@ function FlowCanvas() {
         ref={reactFlowWrapper}
         style={{ flex: 1, height: "100%" }}
       >
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          connectionMode={ConnectionMode.Loose}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          nodeTypes={nodeTypes}
-          onDragOver={onDragOver}
-          onDrop={onDrop}
-          onNodeDragStart={takeSnapShot}
-          onNodesDelete={takeSnapShot}
-          onEdgesDelete={takeSnapShot}
-          defaultEdgeOptions={defaultEdgeOptions}
-          snapToGrid={true}
-          snapGrid={[15, 15]}
-          fitView
-        >
-          <Background variant="dots" gap={12} size={1} />
-          <Controls />
-
-          <Panel
-            position="top right"
-            style={{
-              display: "flex",
-              gap: "10px",
-              alignItems: "center",
-            }}
+        <HistoryContext.Provider value={{ takeSnapShot }}>
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            connectionMode={ConnectionMode.Loose}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            nodeTypes={nodeTypes}
+            onDragOver={onDragOver}
+            onDrop={onDrop}
+            onNodeDragStart={takeSnapShot}
+            onNodesDelete={takeSnapShot}
+            onEdgesDelete={takeSnapShot}
+            defaultEdgeOptions={defaultEdgeOptions}
+            snapToGrid={true}
+            snapGrid={[15, 15]}
+            fitView
           >
-            <button
-              onClick={undo}
-              disabled={past.length === 0}
-              title="Undo"
-              style={{
-                ...circleButtonStyle,
-                cursor: past.length === 0 ? "not-allowed" : "pointer",
-                opacity: past.length === 0 ? 0.5 : 1,
-              }}
-            >
-              <MdUndo size={22} color="black" />
-            </button>
-            <button
-              onClick={redo}
-              disabled={future.length === 0}
-              title="Redo"
-              style={{
-                ...circleButtonStyle,
-                cursor: future.length === 0 ? "not-allowed" : "pointer",
-                opacity: future.length === 0 ? 0.5 : 1,
-              }}
-            >
-              <MdRedo size={22} color="black" />
-            </button>
-          </Panel>
+            <Background variant="dots" gap={12} size={1} />
+            <Controls />
 
-          <Panel position="bottom right">
-            <button
-              onClick={applyAutoLayout}
+            <Panel
+              position="top right"
               style={{
-                padding: "10px 15px",
-                background: "#555",
-                color: "white",
-                borderRadius: "5px",
-                cursor: "pointer",
-                fontWeight: "bold",
-                boxShadow: "0 2px 4px rgba(0, 0, 0, 0, 2)",
+                display: "flex",
+                gap: "10px",
+                alignItems: "center",
               }}
             >
-              {" "}
-              Auto Layout
-            </button>
-          </Panel>
-        </ReactFlow>
+              <button
+                onClick={undo}
+                disabled={past.length === 0}
+                title="Undo"
+                style={{
+                  ...circleButtonStyle,
+                  cursor: past.length === 0 ? "not-allowed" : "pointer",
+                  opacity: past.length === 0 ? 0.5 : 1,
+                }}
+              >
+                <MdUndo size={22} color="black" />
+              </button>
+              <button
+                onClick={redo}
+                disabled={future.length === 0}
+                title="Redo"
+                style={{
+                  ...circleButtonStyle,
+                  cursor: future.length === 0 ? "not-allowed" : "pointer",
+                  opacity: future.length === 0 ? 0.5 : 1,
+                }}
+              >
+                <MdRedo size={22} color="black" />
+              </button>
+            </Panel>
+
+            <Panel position="bottom right">
+              <button
+                onClick={applyAutoLayout}
+                style={{
+                  padding: "10px 15px",
+                  background: "#555",
+                  color: "white",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                  fontWeight: "bold",
+                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0, 2)",
+                }}
+              >
+                {" "}
+                Auto Layout
+              </button>
+            </Panel>
+          </ReactFlow>
+        </HistoryContext.Provider>
       </div>
     </div>
   );
