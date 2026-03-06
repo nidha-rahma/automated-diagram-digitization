@@ -7,6 +7,7 @@ import ReactFlow, {
   Panel,
 } from "reactflow";
 import "reactflow/dist/style.css";
+import { useLocation } from "react-router-dom";
 
 import { useFlowchart } from "./useFlowchart";
 import { nodeTypes, defaultEdgeOptions } from "./flowConfig";
@@ -17,6 +18,10 @@ import { MdUndo, MdRedo } from "react-icons/md";
 import { HistoryContext } from "../../hooks/HistoryContext";
 
 function FlowCanvas() {
+  const location = useLocation();
+
+  // Extract data passed from input page
+  const initialFlowData = location.state?.flowData || { nodes: [], edges: [] };
   const reactFlowWrapper = useRef(null);
   const {
     nodes,
@@ -32,7 +37,7 @@ function FlowCanvas() {
     past,
     future,
     takeSnapShot,
-  } = useFlowchart();
+  } = useFlowchart(initialFlowData);
 
   const circleButtonStyle = {
     width: "40px",

@@ -6,7 +6,6 @@ import {
   useReactFlow,
   MarkerType,
 } from "reactflow";
-import flowData from "../../mock/loop_flow.json";
 
 // Dynamic column snapping (1D Clustering)
 // Assigning specific columns to nodes based on their X value
@@ -81,29 +80,29 @@ const normaliseAndSnap = (nodes) => {
   });
 };
 
-// Map edges using json
-const initialEdges = flowData.edges.map((edge) => {
-  const isVerticalDrop =
-    edge.sourceHandle === "bottom" && edge.targetHandle === "top";
-
-  return {
-    ...edge,
-    type: isVerticalDrop ? "straight" : "smoothstep",
-    markerEnd: {
-      type: MarkerType.ArrowClosed,
-      width: 20,
-      height: 20,
-      color: "#fff",
-    },
-    style: { stroke: "#fff" },
-  };
-});
-
-const alignedNodes = normaliseAndSnap(flowData.nodes);
-
-export const useFlowchart = () => {
-  const [nodes, setNodes, onNodesChange] = useNodesState(alignedNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+export const useFlowchart = (initialData) => {
+  const [nodes, setNodes, onNodesChange] = useNodesState(() => {
+    const rawNodes = initialData?.nodes || [];
+    return rawNodes.length > 0 ? normaliseAndSnap(rawNodes) : [];
+  });
+  const [edges, setEdges, onEdgesChange] = useEdgesState(() => {
+    const rawEdges = initialData?.edges || [];
+    return rawEdges.map((edge) => {
+      const isVerticalDrop =
+        edge.sourceHandle === "bottom" && edge.targetHandle === "top";
+      return {
+        ...edge,
+        type: isVerticalDrop ? "straight" : "smoothstep",
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          width: 20,
+          height: 20,
+          color: "#fff",
+        },
+        style: { stroke: "#fff" },
+      };
+    });
+  });
   const { screenToFlowPosition } = useReactFlow();
 
   // History State
