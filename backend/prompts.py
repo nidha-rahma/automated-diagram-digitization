@@ -5,11 +5,12 @@ Analyze the provided flowchart image and extract its structure into a JSON forma
 Follow these strict rules:
 
 1. Nodes:
-- Identify shapes and map to these EXACT types and dimensions:
-  - rectangle -> type: "process", width: 150, height: 80
-  - diamond -> type: "decision", width: 120, height: 120
-  - oval/circle -> type: "start", width: 100, height: 80
-  - parallelogram -> type: "io", width: 160, height: 80
+- Identify shapes and map to these EXACT types:
+  - rectangle -> type: "process"
+  - diamond -> type: "decision"
+  - oval/circle -> type: "start"
+  - parallelogram -> type: "io"
+- Dimensions: Calculate the actual width and height of each shape based on its bounding box in the image (relative to a 1000x1000 canvas).
 - Extract text into data.label (use \\n for line breaks).
 - Estimate coordinates on a 0-1000 scale.
 
