@@ -5,49 +5,46 @@ Analyze the provided flowchart image and extract its structure into a JSON forma
 Follow these strict rules:
 
 1. Nodes:
-- Identify every shape: rectangle, diamond, oval, circle, parallelogram.
-- Assign a unique numeric ID (string).
-- Extract text into data.label.
-- Map shape to React Flow node type and assign standard dimensions:
-  - rectangle (Process) -> type: "taskNode", width: 150, height: 80
-  - diamond (Decision) -> type: "diamondNode", width: 120, height: 120
-  - oval/circle (Start/End) -> type: "circleNode", width: 100, height: 80
-  - parallelogram (I/O) -> type: "ioNode", width: 160, height: 80
-- Estimate relative canvas coordinates (0–1000 scale).
+- Identify shapes and map to these EXACT types and dimensions:
+  - rectangle -> type: "process", width: 150, height: 80
+  - diamond -> type: "decision", width: 120, height: 120
+  - oval/circle -> type: "start", width: 100, height: 80
+  - parallelogram -> type: "io", width: 160, height: 80
+- Extract text into data.label (use \\n for line breaks).
+- Estimate coordinates on a 0-1000 scale.
 
-Output each node in this format:
-  {
-    "id": "1",
-    "type": "taskNode",
-    "position": { "x": 500, "y": 100 },
-    "width": 150,
-    "height": 80,
-    "data": { "label": "Process Name" }
-  }
+Output each node as:
+{
+  "id": "1",
+  "type": "process",
+  "position": { "x": 500, "y": 100 },
+  "width": 150,
+  "height": 80,
+  "data": { "label": "Text Here" }
+}
 
 2. Edges:
-- Identify arrows. Define 'source' and 'target' IDs.
-- 'label': Extract text on line (e.g., "Yes", "No"). Use "" if empty.
-- 'type': "smoothstep".
+- 'type': "smoothstep"
 - 'markerEnd': { "type": "arrowclosed" }
-- Assign 'sourceHandle' based on direction:
-  - For Decisions: "yes", "no", or "out".
-  - For Others: "out".
-- Assign 'targetHandle': "in".
+- 'sourceHandle' and 'targetHandle': Use "top", "bottom", "left", or "right" based on where the arrow physically enters/exits the shape in the image.
+  - Default exit: "bottom"
+  - Default entry: "top"
+  - Decision side exits: "left" or "right"
+  - Back-loops: Use "left" or "right" for targetHandle to avoid line overlapping.
 
-Output each edge in this format:
+Output each edge as:
 {
   "id": "e1-2",
   "source": "1",
   "target": "2",
-  "sourceHandle": "yes",
-  "targetHandle": "in",
-  "label": "Yes",
+  "sourceHandle": "bottom",
+  "targetHandle": "top",
+  "label": "yes",
   "type": "smoothstep",
   "markerEnd": { "type": "arrowclosed" }
 }
 
 3. Output format:
-- Return ONLY raw JSON. No markdown backticks or explanations.
+- Return ONLY raw JSON. No markdown, no backticks, no preamble.
 - Structure: {"nodes": [...], "edges": [...]}
 """
