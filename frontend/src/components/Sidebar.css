@@ -1,0 +1,89 @@
+/* Matches the dark theme of the Input Page */
+.sidebar-container {
+  width: 150px;
+  background-color: #0f172a; 
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  color: #f8fafc;
+  font-family: 'Outfit', sans-serif;
+  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.sidebar-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebar-title {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  margin: 0;
+  font-weight: 700;
+}
+
+.sidebar-subtitle {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Vertical list layout */
+.sidebar-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.shape-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 8px;
+  background: rgba(30, 41, 59, 0.6); /* Glassy panel background */
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  color: #cbd5e1;
+  cursor: grab;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+/* Indigo glowing hover effect */
+.shape-item:hover {
+  background: rgba(99, 102, 241, 0.1);
+  border-color: #6366f1;
+  color: #818cf8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+}
+
+.shape-item:active {
+  cursor: grabbing;
+  transform: translateY(0);
+}
+
+.shape-item.dragging {
+  opacity: 0.5;
+  border-color: #818cf8;
+}
+
+.shape-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shape-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-align: center;
+}
