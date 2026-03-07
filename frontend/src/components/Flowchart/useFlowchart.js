@@ -9,7 +9,6 @@ import {
 import flowData from "../../mock/check2.json";
 
 // Dynamic column snapping (1D Clustering)
-// Assigning specific columns to nodes based on their X value
 const normaliseAndSnap = (nodes) => {
   const maxWidths = {
     start: 100,
@@ -19,7 +18,6 @@ const normaliseAndSnap = (nodes) => {
   };
 
   nodes.forEach((node) => {
-    // Update maxWidths with maximum width of each node
     if (node.width && node.width > maxWidths[node.type]) {
       maxWidths[node.type] = node.width;
     }
@@ -28,26 +26,21 @@ const normaliseAndSnap = (nodes) => {
   const TOLERANCE = 100;
   const columns = [];
 
-  // Sort nodes based on X value
   const sortedNodes = [...nodes].sort((a, b) => a.position.x - b.position.x);
 
   sortedNodes.forEach((node) => {
     const x = node.position.x;
-
-    // Checks if node belongs to an existing column
     const existingCol = columns.find(
       (col) => Math.abs(col.averageX - x) < TOLERANCE,
     );
 
     if (existingCol) {
-      // Add node to exisitng cols
       existingCol.xValues.push(x);
       existingCol.averageX =
         existingCol.xValues.reduce((sum, val) => sum + val, 0) /
         existingCol.xValues.length;
     } else {
-      // Create new col
-      columns.push({ xValues: [x], averageX: [x] });
+      columns.push({ xValues: [x], averageX: x });
     }
   });
 
@@ -57,7 +50,7 @@ const normaliseAndSnap = (nodes) => {
     );
 
     const targetCenterX = myColumn.averageX;
-    const finalWidth = maxWidths[node.type];
+    const finalWidth = maxWidths[node.type] || 150;
     const centeredX = targetCenterX - finalWidth / 2;
 
     return {
@@ -71,7 +64,6 @@ const normaliseAndSnap = (nodes) => {
   });
 };
 
-// Map edges using json
 const initialEdges = flowData.edges.map((edge) => {
   const isVerticalDrop =
     edge.sourceHandle === "bottom" && edge.targetHandle === "top";
@@ -95,6 +87,21 @@ export const useFlowchart = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(alignedNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const { screenToFlowPosition } = useReactFlow();
+
+  // TASK 2: DELETION HANDLERS (Now inside the hook scope)
+  const onNodesDelete = useCallback(
+    (deleted) => {
+      setNodes((nds) => nds.filter((node) => !deleted.find((d) => d.id === node.id)));
+    },
+    [setNodes]
+  );
+
+  const onEdgesDelete = useCallback(
+    (deleted) => {
+      setEdges((eds) => eds.filter((edge) => !deleted.find((d) => d.id === edge.id)));
+    },
+    [setEdges]
+  );
 
   const onConnect = useCallback(
     (params) => {
@@ -170,5 +177,7 @@ export const useFlowchart = () => {
     onConnect,
     onDragOver,
     onDrop,
+    onNodesDelete,
+    onEdgesDelete,
   };
 };

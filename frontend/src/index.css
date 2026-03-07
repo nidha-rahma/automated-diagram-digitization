@@ -79,3 +79,23 @@ button:focus-visible {
   align-items: center;
   justify-content: center;
 }
+
+/* Target the node container specifically when selected */
+.react-flow__node.selected {
+  outline: 3px solid #007bff !important; /* Use !important to override library defaults */
+  box-shadow: 0 0 15px rgba(0, 123, 255, 0.6) !important;
+  z-index: 1000; /* Ensures the selected node stays on top of others */
+}
+
+/* Target the edge path (the line itself) */
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: #007bff !important;
+  stroke-width: 4px !important;
+  filter: drop-shadow(0 0 5px rgba(0, 123, 255, 0.5));
+}
+
+/* Target the edge label box if it's selected */
+.react-flow__edge.selected .react-flow__edge-textbg {
+  fill: #e7f1ff !important;
+  stroke: #007bff !important;
+}

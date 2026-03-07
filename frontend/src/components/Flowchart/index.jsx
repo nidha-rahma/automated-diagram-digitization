@@ -22,6 +22,8 @@ function FlowCanvas() {
     onConnect,
     onDragOver,
     onDrop,
+    onNodesDelete, 
+    onEdgesDelete,
   } = useFlowchart();
 
   return (
@@ -38,11 +40,17 @@ function FlowCanvas() {
           connectionMode={ConnectionMode.Loose}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
+          onNodesDelete={onNodesDelete} 
+          onEdgesDelete={onEdgesDelete}
           onConnect={onConnect}
           nodeTypes={nodeTypes}
           onDragOver={onDragOver}
           onDrop={onDrop}
           defaultEdgeOptions={defaultEdgeOptions}
+          // PRO SETTINGS
+          deleteKeyCode={["Backspace", "Delete"]} // Support both Mac and Windows keys
+          selectionKeyCode={["Shift"]}            // Hold Shift to select multiple items
+          multiSelectionKeyCode={["Shift"]}
           snapToGrid={true}
           snapGrid={[15, 15]}
           fitView
