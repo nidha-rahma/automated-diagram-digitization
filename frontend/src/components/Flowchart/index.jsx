@@ -19,9 +19,11 @@ import { MdUndo, MdRedo } from "react-icons/md";
 import { HistoryContext } from "../../hooks/HistoryContext";
 import { getFlowchart, updateFlowchart } from "../../services/api";
 
-function FlowCanvas({ initialData, dbId }) {
+function FlowCanvas({ initialData, initialTitle, dbId }) {
   const reactFlowWrapper = useRef(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [title, setTitle] = useState(initialTitle);
+
   const {
     nodes,
     edges,
@@ -57,12 +59,25 @@ function FlowCanvas({ initialData, dbId }) {
   const handleSave = async () => {
     try {
       setIsSaving(true);
-      await updateFlowchart(dbId, { nodes, edges });
+      await updateFlowchart(dbId, { flow_data: { nodes, edges } });
     } catch (error) {
       console.error(error);
       alert("Failed to save changes.");
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleTitleSave = async () => {
+    if (title === initialTitle || !title.trim()) {
+      setTitle(initialTitle);
+      return;
+    }
+
+    try {
+      await updateFlowchart(dbId, { title: title.trim() });
+    } catch (error) {
+      console.error("Failed to save title", error);
     }
   };
 
@@ -95,6 +110,53 @@ function FlowCanvas({ initialData, dbId }) {
           >
             <Background variant="dots" gap={12} size={1} />
             <Controls />
+
+            <Panel position="top-left" style={{ margin: "20px" }}>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") e.target.blur();
+                }}
+                style={{
+                  textAlign: "center",
+                  fontSize: "14px", // Dropped by 1px for a tighter feel
+                  fontWeight: "500", // Changed from 600 to 500 (Medium). Use "400" if you want it completely un-bolded.
+                  color: "#1e293b",
+                  backgroundColor: "#ffffff",
+                  border: "1px solid #cbd5e1",
+                  borderRadius: "6px",
+                  padding: "4px 8px", // Reduced padding to shrink the overall box dimensions
+                  outline: "none",
+                  minWidth: "100px", // Reduced minimum width from 150px
+                  width: `${Math.max(title.length, 8)}ch`, // Dynamic width now snaps tighter to the text
+                  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.06)",
+                  transition: "all 0.15s ease",
+                  cursor: "text",
+                }}
+                onMouseEnter={(e) => {
+                  if (document.activeElement !== e.target) {
+                    e.target.style.borderColor = "#94a3b8";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (document.activeElement !== e.target) {
+                    e.target.style.borderColor = "#cbd5e1";
+                  }
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = "#2563eb";
+                  e.target.style.boxShadow =
+                    "0 0 0 3px rgba(37, 99, 235, 0.15)";
+                }}
+                onBlur={(e) => {
+                  handleTitleSave();
+                  e.target.style.borderColor = "#cbd5e1";
+                  e.target.style.boxShadow = "0 1px 3px rgba(0, 0, 0, 0.06)";
+                }}
+              />
+            </Panel>
 
             <Panel
               position="top right"
@@ -176,6 +238,7 @@ export default function Flowchart() {
   const { id } = useParams(); // Get UUID from browser URL
 
   const [flowData, setFlowData] = useState(null);
+  const [flowTitle, setFlowTitle] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -183,6 +246,7 @@ export default function Flowchart() {
       try {
         const data = await getFlowchart(id);
         setFlowData(data.flow_data);
+        setFlowTitle(data.title);
       } catch (error) {
         console.error("Failed to fetch flowchart", error);
         alert("Flowchart not found in database!");
@@ -191,10 +255,10 @@ export default function Flowchart() {
       }
     };
 
-    if (!flowData && id) {
+    if (id) {
       fetchFromDB();
     }
-  }, [id, flowData]);
+  }, [id]);
 
   if (isLoading) {
     return (
@@ -217,6 +281,7 @@ export default function Flowchart() {
     <ReactFlowProvider>
       <FlowCanvas
         initialData={flowData || { nodes: [], edges: [] }}
+        initialTitle={flowTitle}
         dbId={id}
       />
     </ReactFlowProvider>

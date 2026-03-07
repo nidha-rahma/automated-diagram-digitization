@@ -38,15 +38,15 @@ export const getFlowchart = async (id) => {
   return await response.json();
 };
 
-export const updateFlowchart = async (id, flowData) => {
+export const updateFlowchart = async (id, updates) => {
   const response = await fetch(`${API_URL}/flowcharts/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      title: "Untitled Flowchart",
-      flow_data: flowData,
-    }),
+    body: JSON.stringify(updates),
   });
+
+  if (!response.ok) throw new Error("Failed to update flowchart");
+  return await response.json();
 };
