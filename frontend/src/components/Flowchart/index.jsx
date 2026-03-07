@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ReactFlow, {
   Controls,
   ReactFlowProvider,
@@ -7,7 +7,8 @@ import ReactFlow, {
   Panel,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 
 import { useFlowchart } from "./useFlowchart";
 import { nodeTypes, defaultEdgeOptions } from "./flowConfig";
@@ -16,13 +17,11 @@ import "../../App.css";
 
 import { MdUndo, MdRedo } from "react-icons/md";
 import { HistoryContext } from "../../hooks/HistoryContext";
+import { getFlowchart, updateFlowchart } from "../../services/api";
 
-function FlowCanvas() {
-  const location = useLocation();
-
-  // Extract data passed from input page
-  const initialFlowData = location.state?.flowData || { nodes: [], edges: [] };
+function FlowCanvas({ initialData, dbId }) {
   const reactFlowWrapper = useRef(null);
+  const [isSaving, setIsSaving] = useState(false);
   const {
     nodes,
     edges,
@@ -37,7 +36,7 @@ function FlowCanvas() {
     past,
     future,
     takeSnapShot,
-  } = useFlowchart(initialFlowData);
+  } = useFlowchart(initialData);
 
   const circleButtonStyle = {
     width: "40px",
@@ -53,6 +52,18 @@ function FlowCanvas() {
     fontSize: "20px",
     boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
     transition: "all 0.2s ease",
+  };
+
+  const handleSave = async () => {
+    try {
+      setIsSaving(true);
+      await updateFlowchart(dbId, { nodes, edges });
+    } catch (error) {
+      console.error(error);
+      alert("Failed to save changes.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -117,6 +128,24 @@ function FlowCanvas() {
               >
                 <MdRedo size={22} color="black" />
               </button>
+              <button
+                onClick={handleSave}
+                disabled={isSaving}
+                style={{
+                  padding: "10px 16px",
+                  background: isSaving ? "#475569" : "#10b981",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "6px",
+                  cursor: isSaving ? "not-allowed" : "pointer",
+                  fontWeight: "600",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                }}
+              >
+                {isSaving ? "Saving..." : "Save"}
+              </button>
             </Panel>
 
             <Panel position="bottom right">
@@ -144,9 +173,52 @@ function FlowCanvas() {
 }
 
 export default function Flowchart() {
+  const { id } = useParams(); // Get UUID from browser URL
+
+  const [flowData, setFlowData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFromDB = async () => {
+      try {
+        const data = await getFlowchart(id);
+        setFlowData(data.flow_data);
+      } catch (error) {
+        console.error("Failed to fetch flowchart", error);
+        alert("Flowchart not found in database!");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (!flowData && id) {
+      fetchFromDB();
+    }
+  }, [id, flowData]);
+
+  if (isLoading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          height: "100vh",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "#0f172a",
+          color: "white",
+        }}
+      >
+        <Loader2 className="animate-spin" size={48} />
+      </div>
+    );
+  }
+
   return (
     <ReactFlowProvider>
-      <FlowCanvas />
+      <FlowCanvas
+        initialData={flowData || { nodes: [], edges: [] }}
+        dbId={id}
+      />
     </ReactFlowProvider>
   );
 }

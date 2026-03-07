@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from PIL import Image
 from prompts import SYSTEM_PROMPT
+from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -51,7 +52,14 @@ class FlowchartResponse(BaseModel):
     nodes: List[Node]
     edges: List[Edge]
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    async with engine.begin() as conn:
+        # Creates the 'flowcharts' table if it doesn't exist
+        await conn.run_sync(Base.metadata.create_all)
+    yield
+
+app = FastAPI(lifespan=lifespan)
 
 # Allowed origins
 origins = [
@@ -101,3 +109,43 @@ async def analyze_flowchart(file: UploadFile = File(...)):
 @app.get("/")
 def home():
     return {"message": "Backend is running"}
+
+@app.post("/flowcharts", response_model=schemas.FlowchartResponse)
+async def create_flowchart(flowchart: schemas.FlowchartCreate, db: AsyncSession = Depends(get_db)):
+    new_flowchart = Flowchart(
+        title=flowchart.title,
+        flow_data=flowchart.flow_data
+    )
+    
+    db.add(new_flowchart)
+    await db.commit()
+    await db.refresh(new_flowchart)
+    return new_flowchart
+
+@app.get("/flowcharts/{flowchart_id}", response_model=schemas.FlowchartResponse)
+async def get_flowchart(flowchart_id: UUID, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(Flowchart).where(Flowchart.id==flowchart_id))
+    flowchart = result.scalars().first()
+    
+    if not flowchart:
+        raise HTTPException(status_code=404, detail="Flowchart not found")
+    
+    return flowchart
+
+@app.put("/flowcharts/{flowchart_id}", response_model=schemas.FlowchartResponse)
+async def update_flowchart(flowchart_id: UUID, flowchart_update: schemas.FlowchartUpdate, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(Flowchart).where(Flowchart.id == flowchart_id))
+    flowchart = result.scalars().first()
+    
+    if not flowchart:
+        raise HTTPException(status_code=404, detail="Flowchart not found")
+    
+    if flowchart_update.title is not None:
+        flowchart.title = flowchart_update.title
+    
+    if flowchart_update.flow_data is not None:
+        flowchart.flow_data = flowchart_update.flow_data
+        
+    await db.commit()
+    await db.refresh(flowchart)
+    return flowchart

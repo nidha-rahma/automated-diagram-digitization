@@ -10,7 +10,7 @@ import {
   Loader2,
 } from "lucide-react";
 import "./InputPage.css";
-import { uploadAndAnalyze } from "../services/api";
+import { uploadAndAnalyze, createFlowchart } from "../services/api";
 
 export default function InputPage() {
   const navigate = useNavigate();
@@ -31,9 +31,15 @@ export default function InputPage() {
     if (activeTab === "image" && imageFile) {
       try {
         setIsLoading(true);
+        // Get JSON from AI
         const flowData = await uploadAndAnalyze(imageFile);
 
-        navigate("/flowchart", { state: { flowData } });
+        // Save JSON to PostgreSQL db
+        const dbRecord = await createFlowchart(flowData);
+
+        navigate(`/flowchart/${dbRecord.id}`, {
+          state: { flowData: dbRecord.flow_data },
+        });
       } catch (error) {
         console.error("Analysis failed: ", error);
         alert("Failed to analyze the flowchart. Is your backend running?");
@@ -43,10 +49,17 @@ export default function InputPage() {
     } else if (activeTab === "json" && jsonText) {
       // Quick fallback for the JSON tab!
       try {
+        setIsLoading(true);
         const flowData = JSON.parse(jsonText);
-        navigate("/flowchart", { state: { flowData } });
+        const dbRecord = await createFlowchart(flowData);
+
+        navigate(`/flowchart/${dbRecord.id}`, {
+          state: { flowData: dbRecord.flow_data },
+        });
       } catch (err) {
         alert("Invalid JSON format");
+      } finally {
+        setIsLoading(false);
       }
     }
   };
