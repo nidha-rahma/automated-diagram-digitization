@@ -69,3 +69,13 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* This allows the \n characters from the AI to create actual new lines */
+.react-flow__node {
+  white-space: pre-wrap !important;
+  word-break: break-word;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

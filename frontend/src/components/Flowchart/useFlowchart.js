@@ -6,7 +6,7 @@ import {
   useReactFlow,
   MarkerType,
 } from "reactflow";
-import flowData from "../../mock/loop_flow.json";
+import flowData from "../../mock/check2.json";
 
 // Dynamic column snapping (1D Clustering)
 // Assigning specific columns to nodes based on their X value
