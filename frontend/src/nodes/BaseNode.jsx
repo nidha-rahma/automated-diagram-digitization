@@ -78,7 +78,7 @@ export function BaseNode({
             className="nodrag"
             size={Math.max(label.length, 1)}
             style={{
-              color: "black",
+              color: "var(--node-text)",
               border: "none",
               textAlign: "center",
               outline: "none",
@@ -87,7 +87,9 @@ export function BaseNode({
             }}
           />
         ) : (
-          <div style={{ color: "black", textAlign: "center" }}>{label}</div>
+          <div style={{ color: "var(--node-text)", textAlign: "center" }}>
+            {label}
+          </div>
         )}
       </div>
     </div>

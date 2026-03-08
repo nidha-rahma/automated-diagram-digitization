@@ -11,8 +11,9 @@ export function DecisionNode(props) {
           right: 0,
           bottom: 0,
           left: 0,
-          background: "white",
-          border: "1px solid #777",
+          background: "var(--node-bg)",
+          border: "2px solid var(--node-border)",
+          boxShadow: "0 0 0 1px var(--bg-color) inset",
           // Clip the sqaure into a diamond
           clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)",
           zIndex: -1,

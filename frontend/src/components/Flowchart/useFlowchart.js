@@ -83,9 +83,9 @@ const initialEdges = flowData.edges.map((edge) => {
       type: MarkerType.ArrowClosed,
       width: 20,
       height: 20,
-      color: "#fff",
+      color: "var(--edge-color)",
     },
-    style: { stroke: "#fff" },
+    style: { stroke: "var(--edge-color)" },
   };
 });
 
@@ -105,10 +105,10 @@ export const useFlowchart = () => {
           {
             ...params,
             type: isVerticalDrop ? "straight" : "smoothstep",
-            style: { stroke: "#fff" },
+            style: { stroke: "var(--edge-color)" },
             markerEnd: {
               type: MarkerType.ArrowClosed,
-              color: "#fff",
+              color: "var(--edge-color)",
             },
           },
           eds,
