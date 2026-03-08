@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Upload,
@@ -8,9 +8,12 @@ import {
   FileText,
   CheckCircle2,
   Loader2,
+  Clock,
+  ExternalLink,
 } from "lucide-react";
 import "./InputPage.css";
 import { uploadAndAnalyze, createFlowchart } from "../services/api";
+import { getHistory } from "../services/localHistory";
 
 export default function InputPage() {
   const navigate = useNavigate();
@@ -22,8 +25,14 @@ export default function InputPage() {
   const [imageFile, setImageFile] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [recentFlows, setRecentFlows] = useState([]);
+
+  useEffect(() => {
+    setRecentFlows(getHistory());
+  }, []);
 
   const fileInputRef = useRef(null);
+  const jsonFileInputRef = useRef(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -89,6 +98,25 @@ export default function InputPage() {
     }
   };
 
+  const handleJsonFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const parsedJson = JSON.parse(event.target.result);
+
+        setJsonText(JSON.stringify(parsedJson, null, 2));
+      } catch (err) {
+        alert("The uploaded file does not contain valid JSON.");
+      }
+    };
+    reader.readAsText(file);
+
+    e.target.value = "";
+  };
+
   return (
     <div className="input-page-container">
       <div className="background-shapes">
@@ -128,6 +156,14 @@ export default function InputPage() {
           >
             <FileJson size={18} />
             JSON Data
+          </button>
+          <button
+            className={`tab-btn ${activeTab === "recent" ? "active" : ""}`}
+            onClick={() => setActiveTab("recent")}
+            type="button"
+          >
+            <Clock size={18} />
+            Recent
           </button>
         </div>
 
@@ -193,6 +229,7 @@ export default function InputPage() {
             )}
 
             {/* JSON Tab */}
+            {/* JSON Tab */}
             {activeTab === "json" && (
               <div className="input-group slide-in">
                 <label htmlFor="jsonInput">Paste flow logic in JSON</label>
@@ -202,7 +239,143 @@ export default function InputPage() {
                   value={jsonText}
                   onChange={(e) => setJsonText(e.target.value)}
                   className="modern-textarea font-mono"
+                  style={{ minHeight: "160px" }} // Slightly shorter to fit the button beautifully
                 />
+
+                {/* NEW: JSON File Upload Button */}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    marginTop: "4px",
+                  }}
+                >
+                  <span style={{ fontSize: "0.8rem", color: "#64748b" }}>
+                    Or upload a file directly:
+                  </span>
+
+                  <input
+                    type="file"
+                    accept=".json,application/json"
+                    ref={jsonFileInputRef}
+                    onChange={handleJsonFileUpload}
+                    className="hidden-input"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => jsonFileInputRef.current?.click()}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      padding: "6px 12px",
+                      background: "rgba(99, 102, 241, 0.1)",
+                      color: "#818cf8",
+                      border: "1px solid rgba(99, 102, 241, 0.2)",
+                      borderRadius: "6px",
+                      fontSize: "0.85rem",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.background = "rgba(99, 102, 241, 0.2)";
+                      e.target.style.borderColor = "#6366f1";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.background = "rgba(99, 102, 241, 0.1)";
+                      e.target.style.borderColor = "rgba(99, 102, 241, 0.2)";
+                    }}
+                  >
+                    <Upload size={14} />
+                    Upload .json
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Recent Flowcharts Tab */}
+            {activeTab === "recent" && (
+              <div className="input-group slide-in">
+                <label>Your Recent Work</label>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "10px",
+                    overflowY: "auto",
+                    maxHeight: "250px",
+                    paddingRight: "5px",
+                  }}
+                >
+                  {recentFlows.length === 0 ? (
+                    <div
+                      style={{
+                        textAlign: "center",
+                        color: "#64748b",
+                        padding: "2rem",
+                      }}
+                    >
+                      <Clock
+                        size={32}
+                        style={{ opacity: 0.5, marginBottom: "10px" }}
+                      />
+                      <p>No recent flowcharts found on this device.</p>
+                    </div>
+                  ) : (
+                    recentFlows.map((flow) => (
+                      <div
+                        key={flow.id}
+                        onClick={() => navigate(`/flowchart/${flow.id}`)}
+                        className="recent-history-item"
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          padding: "14px 18px",
+                          background: "rgba(30, 41, 59, 0.6)",
+                          border: "1px solid rgba(255,255,255,0.05)",
+                          borderRadius: "12px",
+                          cursor: "pointer",
+                          transition: "all 0.2s ease",
+                        }}
+                      >
+                        <div>
+                          <h4
+                            style={{
+                              margin: "0 0 4px 0",
+                              color: "#f8fafc",
+                              fontSize: "1.05rem",
+                              fontWeight: 500,
+                            }}
+                          >
+                            {flow.title}
+                          </h4>
+                          <span
+                            style={{ fontSize: "0.8rem", color: "#94a3b8" }}
+                          >
+                            Last opened:{" "}
+                            {new Date(flow.lastAccessed).toLocaleDateString(
+                              undefined,
+                              {
+                                month: "short",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              },
+                            )}
+                          </span>
+                        </div>
+                        <ExternalLink
+                          size={18}
+                          color="#818cf8"
+                          style={{ opacity: 0.8 }}
+                        />
+                      </div>
+                    ))
+                  )}
+                </div>
               </div>
             )}
           </div>

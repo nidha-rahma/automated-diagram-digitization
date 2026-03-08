@@ -18,6 +18,7 @@ import "../../App.css";
 import { MdUndo, MdRedo } from "react-icons/md";
 import { HistoryContext } from "../../hooks/HistoryContext";
 import { getFlowchart, updateFlowchart } from "../../services/api";
+import { saveToHistory } from "../../services/localHistory";
 
 function FlowCanvas({ initialData, initialTitle, dbId }) {
   const reactFlowWrapper = useRef(null);
@@ -76,6 +77,7 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
 
     try {
       await updateFlowchart(dbId, { title: title.trim() });
+      saveToHistory(dbId, title.trim());
     } catch (error) {
       console.error("Failed to save title", error);
     }
@@ -121,16 +123,16 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
                 }}
                 style={{
                   textAlign: "center",
-                  fontSize: "14px", // Dropped by 1px for a tighter feel
-                  fontWeight: "500", // Changed from 600 to 500 (Medium). Use "400" if you want it completely un-bolded.
+                  fontSize: "14px",
+                  fontWeight: "500",
                   color: "#1e293b",
                   backgroundColor: "#ffffff",
                   border: "1px solid #cbd5e1",
                   borderRadius: "6px",
-                  padding: "4px 8px", // Reduced padding to shrink the overall box dimensions
+                  padding: "4px 8px",
                   outline: "none",
-                  minWidth: "100px", // Reduced minimum width from 150px
-                  width: `${Math.max(title.length, 8)}ch`, // Dynamic width now snaps tighter to the text
+                  minWidth: "100px",
+                  width: `${Math.max((title || "").length, 8)}ch`,
                   boxShadow: "0 1px 3px rgba(0, 0, 0, 0.06)",
                   transition: "all 0.15s ease",
                   cursor: "text",
@@ -247,6 +249,8 @@ export default function Flowchart() {
         const data = await getFlowchart(id);
         setFlowData(data.flow_data);
         setFlowTitle(data.title);
+
+        saveToHistory(data.id, data.title);
       } catch (error) {
         console.error("Failed to fetch flowchart", error);
         alert("Flowchart not found in database!");
