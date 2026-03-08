@@ -478,3 +478,52 @@ to {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
+
+/* Start from Scratch Floating Button */
+.start-scratch-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    color: #cbd5e1;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    z-index: 50;
+}
+
+.start-scratch-btn:hover:not(:disabled) {
+    background: rgba(30, 41, 59, 0.9);
+    border-color: #8b5cf6;
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px -5px rgba(139, 92, 246, 0.3);
+}
+
+.start-scratch-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.start-scratch-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.scratch-icon {
+    transition: transform 0.3s ease;
+}
+
+.start-scratch-btn:hover:not(:disabled) .scratch-icon {
+    transform: rotate(-15deg) scale(1.1);
+    color: #a5b4fc;
+}

@@ -10,6 +10,7 @@ import {
   Loader2,
   Clock,
   ExternalLink,
+  PenTool,
 } from "lucide-react";
 import "./InputPage.css";
 import { uploadAndAnalyze, createFlowchart } from "../services/api";
@@ -115,6 +116,25 @@ export default function InputPage() {
     reader.readAsText(file);
 
     e.target.value = "";
+  };
+
+  const handleCreateBlank = async () => {
+    try {
+      setIsLoading(true);
+      // Create an empty layout in the database
+      const blankData = { nodes: [], edges: [] };
+      const dbRecord = await createFlowchart(blankData);
+
+      // Navigate to the new blank canvas
+      navigate(`/flowchart/${dbRecord.id}`, {
+        state: { flowData: dbRecord.flow_data },
+      });
+    } catch (error) {
+      console.error("Failed to create blank flowchart: ", error);
+      alert("Could not initialize a blank canvas. Check your backend.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -406,6 +426,15 @@ export default function InputPage() {
           </div>
         </form>
       </div>
+      <button
+        onClick={handleCreateBlank}
+        disabled={isLoading}
+        className="start-scratch-btn"
+        title="Start from a blank canvas"
+      >
+        <PenTool size={20} className="scratch-icon" />
+        <span>Create new flowchart</span>
+      </button>
     </div>
   );
 }
