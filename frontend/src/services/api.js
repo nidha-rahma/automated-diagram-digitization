@@ -50,3 +50,16 @@ export const updateFlowchart = async (id, updates) => {
   if (!response.ok) throw new Error("Failed to update flowchart");
   return await response.json();
 };
+
+export const generateFromPrompt = async (promptText) => {
+  const response = await fetch(`${API_URL}/analyze/algorithm`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ prompt: promptText }),
+  });
+
+  if (!response.ok) throw new Error("Failed to generate flowchart from prompt");
+  return await response.json();
+};

@@ -49,3 +49,57 @@ Output each edge as:
 - Return ONLY raw JSON. No markdown, no backticks, no preamble.
 - Structure: {"nodes": [...], "edges": [...]}
 """
+
+# Updated System Prompt for Text-to-Flowchart
+TEXT_TO_FLOW_PROMPT = """
+You are a React Flow architect. Convert the user's process description or algorithm into a structured JSON.
+Output ONLY raw JSON.
+
+### NODE RULES (STRICT BOUNDARIES):
+- TYPES: You MUST use only: "start", "process", "decision", "io".
+- ROOT-LEVEL DIMENSIONS: width and height MUST be at the root level of the node object.
+- DYNAMIC SCALING RULE: 
+    * If a label has many lines, you MUST increase width/height to maintain a 25px clear internal margin.
+    * FOR 'decision' DIAMONDS: Because corners cut inward, the node size must be at least 2.5x the width of the longest text line. 
+    * If text in a diamond is 5+ lines, the node size MUST be at least 200x200.
+- FONT SIZE: Assume 12px font. 
+
+### EXAMPLE DYNAMIC STRUCTURE:
+{
+  "id": "unique_id",
+  "type": "decision",
+  "position": {"x": x, "y": y},
+  "data": {"label": "Is the current\\ntemperature\\nsignificantly higher\\nthan the safety\\nthreshold?"},
+  "width": 220,  # AI scales this up from 120 to fit text in diamond points
+  "height": 220
+}
+
+
+### EDGE & LABEL RULES:
+- Use "type": "smoothstep" and "markerEnd": {"type": "arrowclosed"}.
+- Use "sourceHandle" and "targetHandle" (top, bottom, left, right) for clean connections.
+- For decision branches (Yes/No), include these exact styling properties to create a long rectangular box:
+  "label": "Yes",
+  "labelStyle": {"fill": "#000", "fontWeight": 700},
+  "labelBgStyle": {"fill": "#fff", "fillOpacity": 0.9, "stroke": "#000", "strokeWidth": 1},
+  "labelBgPadding": [8, 4],
+  "labelBgBorderRadius": 4
+
+  
+### LABEL & TEXT RULES (RHOMBIC TYPESETTING):
+- IMPORTANT: Labels MUST stay within the diamond's safety zone.
+- VISUAL SHAPING: For 'decision' nodes, format the text block like a rhombus:
+    * The first line must be 1-2 short words.
+    * The middle lines must be the longest (maximum width).
+    * The last line must be 1-2 short words.
+- LINE LENGTH: Middle lines can be up to 18-20 characters; top/bottom lines should be under 10 characters.
+- VERTICAL ALIGNMENT: Use exactly 1 newline (\\n) between lines to ensure vertical centering.
+- DYNAMIC SCALING: If the text is long, you MUST increase root-level 'width' and 'height' to at least 2.5x the longest line length.
+
+
+
+### FONT & SIZE CONSTRAINTS:
+- Use a strict "fontSize": 12 or 13 in the node style to ensure readability without overflow.
+- IMPORTANT: For 'decision' nodes (120x120), the text must be centered and have at least 15px of padding from all diamond edges.
+- If a label is very long, the AI must increase the 'width' and 'height' of that specific node proportionally (e.g., 140x140) instead of letting text bleed out.
+"""

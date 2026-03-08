@@ -39,6 +39,8 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
     past,
     future,
     takeSnapShot,
+    onNodesDelete,
+    onEdgesDelete,
   } = useFlowchart(initialData);
 
   const circleButtonStyle = {
@@ -103,8 +105,11 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
             onDragOver={onDragOver}
             onDrop={onDrop}
             onNodeDragStart={takeSnapShot}
-            onNodesDelete={takeSnapShot}
-            onEdgesDelete={takeSnapShot}
+            deleteKeyCode={["Backspace", "Delete"]}
+            selectionKeyCode={["Shift"]}
+            multiSelectionKeyCode={["Shift"]}
+            onNodesDelete={onNodesDelete || takeSnapShot}
+            onEdgesDelete={onEdgesDelete || takeSnapShot}
             defaultEdgeOptions={defaultEdgeOptions}
             snapToGrid={true}
             snapGrid={[15, 15]}

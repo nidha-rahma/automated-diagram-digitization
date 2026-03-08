@@ -10,7 +10,7 @@ from fastapi import FastAPI, UploadFile, File, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from PIL import Image
-from prompts import SYSTEM_PROMPT
+from prompts import SYSTEM_PROMPT, TEXT_TO_FLOW_PROMPT
 from uuid import UUID
 
 from sqlalchemy import select
@@ -105,6 +105,44 @@ async def analyze_flowchart(file: UploadFile = File(...)):
     except Exception as e:
         logger.error(f"Analysis Failed: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
+    
+
+
+import re # Add this import at the top
+
+@app.post('/analyze/algorithm')
+async def generate_from_text(payload: dict):
+    try:
+        user_prompt = payload.get("prompt", "")
+        if not user_prompt:
+            raise HTTPException(status_code=400, detail="Please provide a 'prompt' field.")
+
+        response = client.models.generate_content(
+            model="gemini-flash-latest",
+            contents=[TEXT_TO_FLOW_PROMPT, f"User Request: {user_prompt}"]
+        )
+
+        # 1. Clean response of any chatty AI text
+        text_response = response.text.strip()
+        
+        # 2. Use regex to find the actual JSON block { ... }
+        match = re.search(r'(\{.*\})', text_response, re.DOTALL)
+        
+        if match:
+            json_str = match.group(1)
+            try:
+                # 3. USE strict=False to handle \n characters (fixes your char 381 error)
+                return json.loads(json_str, strict=False)
+            except json.JSONDecodeError:
+                # 4. Emergency cleaning for single quotes or unescaped newlines
+                fixed_json = json_str.replace("'", '"').replace('\n', '\\n')
+                return json.loads(fixed_json, strict=False)
+        else:
+            raise ValueError("AI didn't provide a valid JSON block.")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
     
 @app.get("/")
 def home():

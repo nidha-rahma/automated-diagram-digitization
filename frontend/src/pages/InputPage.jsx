@@ -13,7 +13,11 @@ import {
   PenTool,
 } from "lucide-react";
 import "./InputPage.css";
-import { uploadAndAnalyze, createFlowchart } from "../services/api";
+import {
+  uploadAndAnalyze,
+  createFlowchart,
+  generateFromPrompt,
+} from "../services/api";
 import { getHistory } from "../services/localHistory";
 
 export default function InputPage() {
@@ -53,6 +57,21 @@ export default function InputPage() {
       } catch (error) {
         console.error("Analysis failed: ", error);
         alert("Failed to analyze the flowchart. Is your backend running?");
+      } finally {
+        setIsLoading(false);
+      }
+    } else if (activeTab === "prompt" && promptText.trim()) {
+      try {
+        setIsLoading(true);
+        const flowData = await generateFromPrompt(promptText);
+        const dbRecord = await createFlowchart(flowData);
+
+        navigate(`/flowchart/${dbRecord.id}`, {
+          state: { flowData: dbRecord.flow_data },
+        });
+      } catch (error) {
+        console.error("Prompt generation failed: ", error);
+        alert("Failed to generate flowchart from text. Check console.");
       } finally {
         setIsLoading(false);
       }

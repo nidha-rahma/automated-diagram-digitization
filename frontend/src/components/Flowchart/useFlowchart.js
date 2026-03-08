@@ -226,6 +226,26 @@ export const useFlowchart = (initialData) => {
     [screenToFlowPosition, setNodes, takeSnapShot],
   );
 
+  const onNodesDelete = useCallback(
+    (deleted) => {
+      takeSnapShot();
+      setNodes((nds) =>
+        nds.filter((node) => !deleted.find((d) => d.id === node.id)),
+      );
+    },
+    [setNodes, takeSnapShot],
+  );
+
+  const onEdgesDelete = useCallback(
+    (deleted) => {
+      takeSnapShot();
+      setEdges((eds) =>
+        eds.filter((edge) => !deleted.find((d) => d.id === edge.id)),
+      );
+    },
+    [setEdges, takeSnapShot],
+  );
+
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (
@@ -268,5 +288,7 @@ export const useFlowchart = (initialData) => {
     past,
     future,
     takeSnapShot,
+    onNodesDelete,
+    onEdgesDelete,
   };
 };
