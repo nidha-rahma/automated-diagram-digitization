@@ -47,15 +47,12 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
     width: "40px",
     height: "40px",
     borderRadius: "50%",
-    border: "1px solid #ddd",
     padding: 0,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     background: "white",
-    color: "#333",
     fontSize: "20px",
-    boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
     transition: "all 0.2s ease",
   };
 
@@ -104,7 +101,14 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh", width: "100vw" }}>
+    <div
+      style={{
+        display: "flex",
+        height: "100vh",
+        width: "100vw",
+        backgroundColor: "#0f172a",
+      }}
+    >
       <Sidebar />
       <div
         className="reactflow-wrapper"
@@ -133,8 +137,21 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
             snapGrid={[15, 15]}
             fitView
           >
-            <Background variant="dots" gap={12} size={1} />
-            <Controls />
+            <Background
+              variant="dots"
+              gap={12}
+              size={2}
+              color="#4f5052"
+              style={{ backgroundColor: "#171e29" }}
+            />
+            <Controls
+              style={{
+                button: {
+                  backgroundColor: "rgba(30, 41, 59, 0.7)",
+                  fill: "white",
+                },
+              }}
+            />
 
             <Panel position="top-left" style={{ margin: "20px" }}>
               <input
@@ -144,6 +161,7 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
                 onKeyDown={(e) => {
                   if (e.key === "Enter") e.target.blur();
                 }}
+                className="editor-title-input"
                 style={{
                   textAlign: "center",
                   fontSize: "14px",
@@ -195,29 +213,32 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
                 onClick={undo}
                 disabled={past.length === 0}
                 title="Undo"
+                className="editor-panel-btn"
                 style={{
                   ...circleButtonStyle,
                   cursor: past.length === 0 ? "not-allowed" : "pointer",
                   opacity: past.length === 0 ? 0.5 : 1,
                 }}
               >
-                <MdUndo size={22} color="black" />
+                <MdUndo size={22} color="#f8fafc" />
               </button>
               <button
                 onClick={redo}
                 disabled={future.length === 0}
                 title="Redo"
+                className="editor-panel-btn"
                 style={{
                   ...circleButtonStyle,
                   cursor: future.length === 0 ? "not-allowed" : "pointer",
                   opacity: future.length === 0 ? 0.5 : 1,
                 }}
               >
-                <MdRedo size={22} color="black" />
+                <MdRedo size={22} color="#f8fafc" />
               </button>
               <button
                 onClick={handleSave}
                 disabled={isSaving}
+                className={isSaving ? "editor-panel-btn" : "editor-save-btn"}
                 style={{
                   padding: "10px 16px",
                   background: isSaving ? "#475569" : "#10b981",
@@ -238,6 +259,7 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
             <Panel position="bottom right">
               <button
                 onClick={applyAutoLayout}
+                className="editor-panel-btn"
                 style={{
                   padding: "10px 15px",
                   background: "#555",
