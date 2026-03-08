@@ -87,3 +87,26 @@
   font-weight: 500;
   text-align: center;
 }
+
+/* Sidebar Light Theme Overrides */
+.light-theme .sidebar-container {
+  background-color: #ffffff;
+  border-right: 1px solid #e2e8f0;
+  color: #0f172a;
+}
+.light-theme .sidebar-title {
+  color: #334155;
+}
+.light-theme .sidebar-subtitle {
+  color: #64748b;
+}
+.light-theme .shape-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+}
+.light-theme .shape-item:hover {
+  background: #e0e7ff;
+  border-color: #818cf8;
+  color: #4f46e5;
+}

@@ -87,7 +87,9 @@ export function BaseNode({
             }}
           />
         ) : (
-          <div style={{ color: "black", textAlign: "center" }}>{label}</div>
+          <div style={{ color: "var(--node-text)", textAlign: "center" }}>
+            {label}
+          </div>
         )}
       </div>
     </div>

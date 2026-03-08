@@ -15,7 +15,7 @@ import { nodeTypes, defaultEdgeOptions } from "./flowConfig";
 import Sidebar from "../Sidebar";
 import "../../App.css";
 
-import { MdUndo, MdRedo } from "react-icons/md";
+import { MdUndo, MdRedo, MdDarkMode, MdLightMode } from "react-icons/md";
 import { HistoryContext } from "../../hooks/HistoryContext";
 import { getFlowchart, updateFlowchart } from "../../services/api";
 import { saveToHistory } from "../../services/localHistory";
@@ -24,6 +24,18 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
   const reactFlowWrapper = useRef(null);
   const [isSaving, setIsSaving] = useState(false);
   const [title, setTitle] = useState(initialTitle);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem("clickflow_theme");
+    return savedTheme ? savedTheme === "dark" : true; // Default to dark mode
+  });
+
+  const toggleTheme = () => {
+    setIsDarkMode((prev) => {
+      const newTheme = !prev;
+      localStorage.setItem("clickflow_theme", newTheme ? "dark" : "light");
+      return newTheme;
+    });
+  };
 
   const {
     nodes,
@@ -102,11 +114,12 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
 
   return (
     <div
+      className={isDarkMode ? "dark-theme" : "light-theme"}
       style={{
         display: "flex",
         height: "100vh",
         width: "100vw",
-        backgroundColor: "#0f172a",
+        backgroundColor: isDarkMode ? "#0f172a" : "#f8fafc",
       }}
     >
       <Sidebar />
@@ -141,8 +154,8 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
               variant="dots"
               gap={12}
               size={2}
-              color="#4f5052"
-              style={{ backgroundColor: "#171e29" }}
+              color={isDarkMode ? "#4f5052" : "#cbd5e1"}
+              style={{ backgroundColor: isDarkMode ? "#171e29" : "#f8fafc" }}
             />
             <Controls
               style={{
@@ -210,6 +223,20 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
               }}
             >
               <button
+                onClick={toggleTheme}
+                title={
+                  isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"
+                }
+                className="editor-panel-btn"
+                style={{ ...circleButtonStyle }}
+              >
+                {isDarkMode ? (
+                  <MdLightMode size={20} color="#f8fafc" />
+                ) : (
+                  <MdDarkMode size={20} color="#334155" />
+                )}
+              </button>
+              <button
                 onClick={undo}
                 disabled={past.length === 0}
                 title="Undo"
@@ -220,7 +247,7 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
                   opacity: past.length === 0 ? 0.5 : 1,
                 }}
               >
-                <MdUndo size={22} color="#f8fafc" />
+                <MdUndo size={22} color={isDarkMode ? "#f8fafc" : "#334155"} />
               </button>
               <button
                 onClick={redo}
@@ -233,7 +260,7 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
                   opacity: future.length === 0 ? 0.5 : 1,
                 }}
               >
-                <MdRedo size={22} color="#f8fafc" />
+                <MdRedo size={22} color={isDarkMode ? "#f8fafc" : "#334155"} />
               </button>
               <button
                 onClick={handleSave}
