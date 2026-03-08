@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import ReactFlow, {
   Controls,
   ReactFlowProvider,
@@ -59,7 +59,7 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
     transition: "all 0.2s ease",
   };
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     try {
       setIsSaving(true);
       await updateFlowchart(dbId, { flow_data: { nodes, edges } });
@@ -69,7 +69,25 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
     } finally {
       setIsSaving(false);
     }
-  };
+  }, [dbId, nodes, edges]);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      const isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0;
+      const cmdOrCtrl = isMac ? event.metaKey : event.ctrlKey;
+
+      if (cmdOrCtrl && event.key.toLowerCase() === "s") {
+        event.preventDefault();
+
+        if (!isSaving) {
+          handleSave();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleSave, isSaving]);
 
   const handleTitleSave = async () => {
     if (title === initialTitle || !title.trim()) {

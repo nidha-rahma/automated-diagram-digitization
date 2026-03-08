@@ -81,15 +81,24 @@ const normaliseAndSnap = (nodes) => {
 };
 
 export const useFlowchart = (initialData) => {
-  const [nodes, setNodes, onNodesChange] = useNodesState(() => {
-    const rawNodes = initialData?.nodes || [];
-    return rawNodes.length > 0 ? normaliseAndSnap(rawNodes) : [];
-  });
+  const initialSnappedNodes =
+    initialData?.nodes?.length > 0 ? normaliseAndSnap(initialData.nodes) : [];
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialSnappedNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(() => {
     const rawEdges = initialData?.edges || [];
     return rawEdges.map((edge) => {
-      const isVerticalDrop =
+      let isVerticalDrop =
         edge.sourceHandle === "bottom" && edge.targetHandle === "top";
+
+      const sourceNode = initialSnappedNodes.find((n) => n.id === edge.source);
+      const targetNode = initialSnappedNodes.find((n) => n.id === edge.target);
+
+      if (sourceNode && targetNode) {
+        if (Math.abs(sourceNode.position.x - targetNode.position.x) > 50) {
+          isVerticalDrop = false;
+        }
+      }
+
       return {
         ...edge,
         type: isVerticalDrop ? "straight" : "smoothstep",
@@ -147,21 +156,49 @@ export const useFlowchart = (initialData) => {
 
   const applyAutoLayout = useCallback(() => {
     takeSnapShot();
-    setNodes((currentNodes) => normaliseAndSnap(currentNodes));
-    setEdges((currentEdges) =>
-      currentEdges.map((edge) => {
-        const isVerticalDrop =
-          edge.sourceHandle === "bottom" && edge.targetHandle === "top";
-        return { ...edge, type: isVerticalDrop ? "straight" : "smoothstep" };
-      }),
-    );
+
+    setNodes((currentNodes) => {
+      const newlyAlignedNodes = normaliseAndSnap(currentNodes);
+
+      setEdges((currentEdges) =>
+        currentEdges.map((edge) => {
+          let isVerticalDrop =
+            edge.sourceHandle === "bottom" && edge.targetHandle === "top";
+          const sourceNode = newlyAlignedNodes.find(
+            (n) => n.id === edge.source,
+          );
+          const targetNode = newlyAlignedNodes.find(
+            (n) => n.id === edge.target,
+          );
+
+          if (sourceNode && targetNode) {
+            if (Math.abs(sourceNode.position.x - targetNode.position.x) > 50) {
+              isVerticalDrop = false;
+            }
+          }
+
+          return { ...edge, type: isVerticalDrop ? "straight" : "smoothstep" };
+        }),
+      );
+      return newlyAlignedNodes;
+    });
   }, [setNodes, setEdges, takeSnapShot]);
 
   const onConnect = useCallback(
     (params) => {
       takeSnapShot();
-      const isVerticalDrop =
+      let isVerticalDrop =
         params.sourceHandle === "bottom" && params.targetHandle === "top";
+
+      const sourceNode = nodes.find((n) => n.id === params.source);
+      const targetNode = nodes.find((n) => n.id === params.target);
+
+      if (sourceNode && targetNode) {
+        if (Math.abs(sourceNode.position.x - targetNode.position.x) > 50) {
+          isVerticalDrop = false;
+        }
+      }
+
       setEdges((eds) =>
         addEdge(
           {
