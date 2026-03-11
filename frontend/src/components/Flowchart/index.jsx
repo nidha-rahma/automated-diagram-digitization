@@ -54,7 +54,12 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
     takeSnapShot,
     onNodesDelete,
     onEdgesDelete,
+    updateEdgeLabel,
+    changeNodeColor,
   } = useFlowchart(initialData);
+
+  const [edgeLabelEdit, setEdgeLabelEdit] = useState(null);
+  const hasSelectedNodes = nodes.some((n) => n.selected);
 
   const circleButtonStyle = {
     width: "40px",
@@ -113,6 +118,22 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
     }
   };
 
+  const onEdgeDoubleClick = useCallback((event, edge) => {
+    event.stopPropagation();
+    setEdgeLabelEdit({
+      id: edge.id,
+      label: edge.label || "",
+      x: event.clientX,
+      y: event.clientY,
+    });
+  }, []);
+
+  const saveEdgeLabel = () => {
+    if (!edgeLabelEdit) return;
+    updateEdgeLabel(edgeLabelEdit.id, edgeLabelEdit.label);
+    setEdgeLabelEdit(null);
+  };
+
   return (
     <div
       className={isDarkMode ? "dark-theme" : "light-theme"}
@@ -120,10 +141,14 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
         display: "flex",
         height: "100vh",
         width: "100vw",
+        overflow: "hidden",
         backgroundColor: isDarkMode ? "#0f172a" : "#f8fafc",
       }}
     >
-      <Sidebar />
+      <Sidebar
+        onColorChange={changeNodeColor}
+        hasSelection={hasSelectedNodes}
+      />
       <div
         className="reactflow-wrapper"
         ref={reactFlowWrapper}
@@ -147,6 +172,8 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
             onNodesDelete={onNodesDelete || takeSnapShot}
             onEdgesDelete={onEdgesDelete || takeSnapShot}
             defaultEdgeOptions={defaultEdgeOptions}
+            onEdgeDoubleClick={onEdgeDoubleClick}
+            onPaneClick={() => setEdgeLabelEdit(null)}
             snapToGrid={true}
             snapGrid={[15, 15]}
             fitView
@@ -308,6 +335,49 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
                 Auto Layout
               </button>
             </Panel>
+            {edgeLabelEdit && (
+              <div
+                style={{
+                  position: "fixed",
+                  top: edgeLabelEdit.y - 20,
+                  left: edgeLabelEdit.x - 60,
+                  zIndex: 1000,
+                  background: "var(--node-bg)",
+                  border: "2px solid var(--node-border)",
+                  borderRadius: "6px",
+                  padding: "4px 8px",
+                  boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
+                  display: "flex",
+                }}
+              >
+                <input
+                  autoFocus
+                  value={edgeLabelEdit.label}
+                  onChange={(e) =>
+                    setEdgeLabelEdit({
+                      ...edgeLabelEdit,
+                      label: e.target.value,
+                    })
+                  }
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") saveEdgeLabel();
+                    if (e.key === "Escape") setEdgeLabelEdit(null);
+                  }}
+                  onBlur={saveEdgeLabel}
+                  placeholder="Label text..."
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    outline: "none",
+                    color: "var(--node-text)",
+                    width: "120px",
+                    fontSize: "13px",
+                    fontWeight: "500",
+                    textAlign: "center",
+                  }}
+                />
+              </div>
+            )}
           </ReactFlow>
         </HistoryContext.Provider>
       </div>

@@ -22,3 +22,12 @@ export const saveToHistory = (id, title) => {
 export const getHistory = () => {
   return JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
 };
+
+export const removeFromHistory = (id) => {
+  let history = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+
+  history = history.filter((item) => item.id != id);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+
+  return history;
+};

@@ -551,3 +551,29 @@ to {
     transform: rotate(-15deg) scale(1.1);
     color: #a5b4fc;
 }
+
+/* Recent History Delete Button */
+.history-delete-btn {
+    background: transparent;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+/* Turns vibrant red with a soft background on hover */
+.history-delete-btn:hover {
+    color: #ef4444; 
+    background: rgba(239, 68, 68, 0.1);
+    transform: scale(1.1);
+}
+
+/* Prevent the button from triggering the parent's hover effects weirdly */
+.history-delete-btn:active {
+    transform: scale(0.95);
+}

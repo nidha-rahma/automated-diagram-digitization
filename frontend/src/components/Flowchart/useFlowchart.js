@@ -243,7 +243,7 @@ export const useFlowchart = (initialData) => {
         defaultW = 120;
         defaultH = 120;
       } else if (type === "start") {
-        defaultW = 80;
+        defaultW = 90;
         defaultH = 40;
       } else if (type === "io") {
         defaultW = 100;
@@ -278,6 +278,56 @@ export const useFlowchart = (initialData) => {
       takeSnapShot();
       setEdges((eds) =>
         eds.filter((edge) => !deleted.find((d) => d.id === edge.id)),
+      );
+    },
+    [setEdges, takeSnapShot],
+  );
+
+  const changeNodeColor = useCallback(
+    (color) => {
+      takeSnapShot();
+      setNodes((nds) =>
+        nds.map((node) => {
+          if (node.selected) {
+            return {
+              ...node,
+              data: { ...node.data, fill: color },
+            };
+          }
+          return node;
+        }),
+      );
+    },
+    [setNodes, takeSnapShot],
+  );
+
+  const updateEdgeLabel = useCallback(
+    (edgeId, newLabel) => {
+      takeSnapShot();
+
+      setEdges((eds) =>
+        eds.map((edge) => {
+          if (edge.id === edgeId) {
+            return {
+              ...edge,
+              label: newLabel,
+              labelStyle: {
+                fill: "var(--node-text)",
+                fontWeight: 600,
+                fontSize: 12,
+              },
+              labelBgStyle: {
+                fill: "var(--node-bg)",
+                stroke: "var(--node-border)",
+                strokeWidth: 1.5,
+                rx: 4,
+                ry: 4,
+              },
+              labelBgPadding: [8, 4],
+            };
+          }
+          return edge;
+        }),
       );
     },
     [setEdges, takeSnapShot],
@@ -327,5 +377,7 @@ export const useFlowchart = (initialData) => {
     takeSnapShot,
     onNodesDelete,
     onEdgesDelete,
+    updateEdgeLabel,
+    changeNodeColor,
   };
 };

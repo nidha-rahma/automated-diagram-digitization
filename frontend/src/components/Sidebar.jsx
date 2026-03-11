@@ -90,7 +90,16 @@ const nodeTypes = [
   }
 ];
 
-function Sidebar() {
+const presetColors = [
+  { label: "Default", value: null, hex: "var(--node-bg)" }, // Resets to theme
+  { label: "Red", value: "#fecaca", hex: "#fecaca" },
+  { label: "Green", value: "#bbf7d0", hex: "#bbf7d0" },
+  { label: "Blue", value: "#bfdbfe", hex: "#bfdbfe" },
+  { label: "Yellow", value: "#fef08a", hex: "#fef08a" },
+  { label: "Purple", value: "#e9d5ff", hex: "#e9d5ff" },
+];
+
+function Sidebar({ onColorChange, hasSelection }) {
   const onDragStart = (event, nodeType) => {
     event.dataTransfer.setData("application/reactflow", nodeType);
     event.dataTransfer.effectAllowed = "all";
@@ -121,6 +130,26 @@ function Sidebar() {
             <div className="shape-icon">{node.icon}</div>
             <span className="shape-label">{node.label}</span>
           </div>
+        ))}
+      </div>
+
+      <div className="sidebar-divider"></div>
+
+      <div className="sidebar-header" style={{ marginTop: "10px" }}>
+        <h2 className="sidebar-title">Fill Color</h2>
+        <p className="sidebar-subtitle">Select nodes to colorize</p>
+      </div>
+
+      <div className={`color-palette ${!hasSelection ? "disabled" : ""}`}>
+        {presetColors.map((color) => (
+          <button
+            key={color.label}
+            className="color-swatch"
+            style={{ background: color.hex }}
+            title={color.label}
+            disabled={!hasSelection}
+            onClick={() => onColorChange(color.value)}
+          />
         ))}
       </div>
     </aside>
