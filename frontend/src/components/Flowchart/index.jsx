@@ -13,6 +13,7 @@ import { Loader2 } from "lucide-react";
 import { useFlowchart } from "./useFlowchart";
 import { nodeTypes, defaultEdgeOptions } from "./flowConfig";
 import Sidebar from "../Sidebar";
+import { ExportMenu } from "../ExportMenu";
 import "../../App.css";
 
 import { MdUndo, MdRedo, MdDarkMode, MdLightMode } from "react-icons/md";
@@ -262,6 +263,12 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
               >
                 <MdRedo size={22} color={isDarkMode ? "#f8fafc" : "#334155"} />
               </button>
+              <ExportMenu
+                nodes={nodes}
+                edges={edges}
+                canvasRef={reactFlowWrapper}
+                title={title}
+              />
               <button
                 onClick={handleSave}
                 disabled={isSaving}

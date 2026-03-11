@@ -10,7 +10,8 @@ export const uploadAndAnalyze = async (file) => {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to analyze image");
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to analyze image. Is your backend running?");
   }
 
   return await response.json();
@@ -54,12 +55,13 @@ export const updateFlowchart = async (id, updates) => {
 export const generateFromPrompt = async (promptText) => {
   const response = await fetch(`${API_URL}/analyze/algorithm`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ prompt: promptText }),
   });
 
-  if (!response.ok) throw new Error("Failed to generate flowchart from prompt");
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to generate flowchart from prompt.");
+  }
   return await response.json();
 };
