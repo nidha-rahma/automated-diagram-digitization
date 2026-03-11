@@ -54,9 +54,11 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
     onNodesDelete,
     onEdgesDelete,
     updateEdgeLabel,
+    changeNodeColor,
   } = useFlowchart(initialData);
 
   const [edgeLabelEdit, setEdgeLabelEdit] = useState(null);
+  const hasSelectedNodes = nodes.some((n) => n.selected);
 
   const circleButtonStyle = {
     width: "40px",
@@ -138,10 +140,14 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
         display: "flex",
         height: "100vh",
         width: "100vw",
+        overflow: "hidden",
         backgroundColor: isDarkMode ? "#0f172a" : "#f8fafc",
       }}
     >
-      <Sidebar />
+      <Sidebar
+        onColorChange={changeNodeColor}
+        hasSelection={hasSelectedNodes}
+      />
       <div
         className="reactflow-wrapper"
         ref={reactFlowWrapper}

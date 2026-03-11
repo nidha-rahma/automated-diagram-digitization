@@ -283,6 +283,24 @@ export const useFlowchart = (initialData) => {
     [setEdges, takeSnapShot],
   );
 
+  const changeNodeColor = useCallback(
+    (color) => {
+      takeSnapShot();
+      setNodes((nds) =>
+        nds.map((node) => {
+          if (node.selected) {
+            return {
+              ...node,
+              data: { ...node.data, fill: color },
+            };
+          }
+          return node;
+        }),
+      );
+    },
+    [setNodes, takeSnapShot],
+  );
+
   const updateEdgeLabel = useCallback(
     (edgeId, newLabel) => {
       takeSnapShot();
@@ -360,5 +378,6 @@ export const useFlowchart = (initialData) => {
     onNodesDelete,
     onEdgesDelete,
     updateEdgeLabel,
+    changeNodeColor,
   };
 };
