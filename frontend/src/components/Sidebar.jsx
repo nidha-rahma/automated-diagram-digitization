@@ -69,6 +69,25 @@ const nodeTypes = [
       </svg>
     ),
   },
+  {
+    type: "text",
+    label: "Text",
+    icon: (
+      <svg width="32" height="32" viewBox="0 0 32 32">
+        <text
+          x="16"
+          y="24"
+          textAnchor="middle"
+          fontSize="24"
+          fontWeight="bold"
+          fontFamily="serif"
+          fill="currentColor"
+        >
+          T
+        </text>
+      </svg>
+    )
+  }
 ];
 
 function Sidebar() {
