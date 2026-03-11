@@ -11,6 +11,7 @@ import {
   Clock,
   ExternalLink,
   PenTool,
+  Trash2,
 } from "lucide-react";
 import "./InputPage.css";
 import {
@@ -18,7 +19,7 @@ import {
   createFlowchart,
   generateFromPrompt,
 } from "../services/api";
-import { getHistory } from "../services/localHistory";
+import { getHistory, removeFromHistory } from "../services/localHistory";
 
 export default function InputPage() {
   const navigate = useNavigate();
@@ -35,6 +36,12 @@ export default function InputPage() {
   useEffect(() => {
     setRecentFlows(getHistory());
   }, []);
+
+  const handleDeleteHistory = (e, id) => {
+    e.stopPropagation();
+    const updatedHistory = removeFromHistory(id);
+    setRecentFlows(updatedHistory);
+  };
 
   const fileInputRef = useRef(null);
   const jsonFileInputRef = useRef(null);
@@ -406,11 +413,28 @@ export default function InputPage() {
                             )}
                           </span>
                         </div>
-                        <ExternalLink
-                          size={18}
-                          color="#818cf8"
-                          style={{ opacity: 0.8 }}
-                        />
+
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "12px",
+                          }}
+                        >
+                          <button
+                            onClick={(e) => handleDeleteHistory(e, flow.id)}
+                            className="history-delete-btn"
+                            title="Remove from history"
+                            type="button"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                          <ExternalLink
+                            size={18}
+                            color="#818cf8"
+                            style={{ opacity: 0.8 }}
+                          />
+                        </div>
                       </div>
                     ))
                   )}
