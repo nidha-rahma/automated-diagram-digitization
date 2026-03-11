@@ -37,7 +37,7 @@ export function ExportMenu({ nodes, edges, canvasRef, title }) {
       id: idMap[node.id],
     }));
 
-    const cleanEdges = edges.map((edge, i) => ({
+    const cleanEdges = edges.map((edge) => ({
       ...edge,
       id: `e${idMap[edge.source]}-${idMap[edge.target]}`,
       source: idMap[edge.source] ?? edge.source,
@@ -143,7 +143,7 @@ export function ExportMenu({ nodes, edges, canvasRef, title }) {
     const flowEl = canvasRef.current?.querySelector(".react-flow");
     if (!flowEl) return;
     try {
-      const dataUrl = await captureFlow(flowEl, (el, _bg) =>
+      const dataUrl = await captureFlow(flowEl, (el) =>
         toSvg(el, {
           filter: (n) =>
             !n.classList?.contains("react-flow__controls") &&

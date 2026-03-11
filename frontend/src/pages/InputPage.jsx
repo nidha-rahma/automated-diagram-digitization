@@ -128,6 +128,7 @@ export default function InputPage() {
 
         setJsonText(JSON.stringify(parsedJson, null, 2));
       } catch (err) {
+        console.error("Invalid JSON:", err);
         alert("The uploaded file does not contain valid JSON.");
       }
     };

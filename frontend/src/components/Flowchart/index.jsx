@@ -7,13 +7,14 @@ import ReactFlow, {
   Panel,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 
 import { useFlowchart } from "./useFlowchart";
 import { nodeTypes, defaultEdgeOptions } from "./flowConfig";
 import Sidebar from "../Sidebar";
 import { ExportMenu } from "../ExportMenu";
+import { TextStyleToolbar } from "../TextStyleToolbar";
 import "../../App.css";
 
 import { MdUndo, MdRedo, MdDarkMode, MdLightMode } from "react-icons/md";
@@ -59,7 +60,12 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
   } = useFlowchart(initialData);
 
   const [edgeLabelEdit, setEdgeLabelEdit] = useState(null);
+  const [textEditingNodeId, setTextEditingNodeId] = useState(null);
+  const [recentColors, setRecentColors] = useState([]);
   const hasSelectedNodes = nodes.some((n) => n.selected);
+  const selectedNode = nodes.filter((n) => n.selected).length === 1
+    ? nodes.find((n) => n.selected)
+    : null;
 
   const circleButtonStyle = {
     width: "40px",
@@ -128,6 +134,10 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
     });
   }, []);
 
+  const onNodeDoubleClick = useCallback((event, node) => {
+    setTextEditingNodeId(node.id);
+  }, []);
+
   const saveEdgeLabel = () => {
     if (!edgeLabelEdit) return;
     updateEdgeLabel(edgeLabelEdit.id, edgeLabelEdit.label);
@@ -173,7 +183,17 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
             onEdgesDelete={onEdgesDelete || takeSnapShot}
             defaultEdgeOptions={defaultEdgeOptions}
             onEdgeDoubleClick={onEdgeDoubleClick}
-            onPaneClick={() => setEdgeLabelEdit(null)}
+            onNodeDoubleClick={onNodeDoubleClick}
+            onPaneClick={() => {
+              setEdgeLabelEdit(null);
+              setTextEditingNodeId(null);
+            }}
+            onSelectionChange={(params) => {
+              // Clear text editing state if selection changes
+              if (params.nodes.length !== 1 || params.nodes[0].id !== textEditingNodeId) {
+                setTextEditingNodeId(null);
+              }
+            }}
             snapToGrid={true}
             snapGrid={[15, 15]}
             fitView
@@ -193,6 +213,17 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
                 },
               }}
             />
+
+            {/* Text style toolbar*/}
+            {selectedNode && textEditingNodeId === selectedNode.id && (
+              <Panel position="top-center" style={{ margin: "12px 0 0 0" }}>
+                <TextStyleToolbar 
+                  selectedNode={selectedNode} 
+                  recentColors={recentColors}
+                  setRecentColors={setRecentColors}
+                />
+              </Panel>
+            )}
 
             <Panel position="top-left" style={{ margin: "20px" }}>
               <input
