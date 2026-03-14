@@ -253,14 +253,28 @@
 :root {
   --node-bg: #ffffff;      /* Dark slate background (so white text is visible!) */
   --node-border: #475569;  /* Subtle grey-blue border */
-  --node-text: #000000;    /* Pure white text */
+  --node-text: #000000;
+  --edge-color: #ffffff;    /* Pure white text */
+
+  --color-red: #fecaca;
+  --color-green: #bbf7d0;
+  --color-blue: #bfdbfe;
+  --color-yellow: #fef08a;
+  --color-purple: #e9d5ff;
 }
 
 /* 2. Light Theme colors */
 .light-theme {
   --node-bg: #504f52;      /* Soft indigo background */
   --node-border: #ffffff;  /* Vibrant indigo border */
-  --node-text: #e4e3e3;    /* Pure black text */
+  --node-text: #e4e3e3;
+  --edge-color: #504f52;    /* Pure black text */
+
+  --color-red: #7f1d1d;
+  --color-green: #14532d;
+  --color-blue: #1e3a8a;
+  --color-yellow: #a1860c;
+  --color-purple: #4c1d95;
 }
 
 /* 3. Apply the dynamic text color to ALL nodes */

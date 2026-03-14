@@ -106,9 +106,9 @@ export const useFlowchart = (initialData) => {
           type: MarkerType.ArrowClosed,
           width: 20,
           height: 20,
-          color: "#fff",
+          color: "var(--edge-color)",
         },
-        style: { stroke: "#fff" },
+        style: { stroke: "var(--edge-color)" },
       };
     });
   });
@@ -204,10 +204,10 @@ export const useFlowchart = (initialData) => {
           {
             ...params,
             type: isVerticalDrop ? "straight" : "smoothstep",
-            style: { stroke: "#fff" },
+            style: { stroke: "var(--edge-color)" },
             markerEnd: {
               type: MarkerType.ArrowClosed,
-              color: "#fff",
+              color: "var(--edge-color)",
             },
           },
           eds,

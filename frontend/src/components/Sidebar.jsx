@@ -72,12 +72,12 @@ const nodeTypes = [
 ];
 
 const presetColors = [
-  { label: "Default", value: null, hex: "var(--node-bg)" }, // Resets to theme
-  { label: "Red", value: "#fecaca", hex: "#fecaca" },
-  { label: "Green", value: "#bbf7d0", hex: "#bbf7d0" },
-  { label: "Blue", value: "#bfdbfe", hex: "#bfdbfe" },
-  { label: "Yellow", value: "#fef08a", hex: "#fef08a" },
-  { label: "Purple", value: "#e9d5ff", hex: "#e9d5ff" },
+  { label: "Default", value: null, hex: "var(--node-bg)" },
+  { label: "Red", value: "var(--color-red)", hex: "var(--color-red)" },
+  { label: "Green", value: "var(--color-green)", hex: "var(--color-green)" },
+  { label: "Blue", value: "var(--color-blue)", hex: "var(--color-blue)" },
+  { label: "Yellow", value: "var(--color-yellow)", hex: "var(--color-yellow)" },
+  { label: "Purple", value: "var(--color-purple)", hex: "var(--color-purple)" },
 ];
 
 function Sidebar({ onColorChange, hasSelection }) {
