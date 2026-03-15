@@ -1,13 +1,24 @@
 import React from "react";
 import { useReactFlow } from "reactflow";
 import { useHistory } from "../hooks/HistoryContext";
-import { Bold, Italic, AlignLeft, AlignCenter, AlignRight, Plus } from "lucide-react";
+import {
+  Bold,
+  Italic,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  Plus,
+} from "lucide-react";
 import "./TextStyleToolbar.css";
 
 const FONT_SIZES = [10, 12, 14, 16, 20, 24];
 const COLORS = ["#ffffff", "#000000", "#facc15", "#4ade80", "#60a5fa"];
 
-export function TextStyleToolbar({ selectedNode, recentColors = [], setRecentColors }) {
+export function TextStyleToolbar({
+  selectedNode,
+  recentColors = [],
+  setRecentColors,
+}) {
   const { setNodes } = useReactFlow();
   const { takeSnapShot } = useHistory();
 
@@ -15,34 +26,43 @@ export function TextStyleToolbar({ selectedNode, recentColors = [], setRecentCol
 
   const ts = selectedNode.data.textStyle || {};
 
-  const applyStyle = (patch) => {
-    takeSnapShot();
-    
-    // Add to recent colors if it's a new custom color
-    if (patch.color && !COLORS.includes(patch.color) && !recentColors.includes(patch.color)) {
-      setRecentColors(prev => {
-        const updated = [...prev, patch.color];
-        // Keep max 5 recent colors
-        if (updated.length > 5) return updated.slice(updated.length - 5);
-        return updated;
-      });
+  const applyStyle = (patch, isFinal = true) => {
+    if (isFinal) {
+      takeSnapShot();
+
+      // Add to recent colors if it's a new custom color
+      if (
+        patch.color &&
+        !COLORS.includes(patch.color) &&
+        !recentColors.includes(patch.color)
+      ) {
+        setRecentColors((prev) => {
+          const updated = [...prev, patch.color];
+          // Keep max 5 recent colors
+          if (updated.length > 5) return updated.slice(updated.length - 5);
+          return updated;
+        });
+      }
     }
 
     setNodes((nodes) =>
       nodes.map((n) =>
         n.id === selectedNode.id
           ? { ...n, data: { ...n.data, textStyle: { ...ts, ...patch } } }
-          : n
-      )
+          : n,
+      ),
     );
   };
 
   const getAlignIcon = (align) => {
     switch (align) {
-      case "left": return <AlignLeft size={16} />;
-      case "right": return <AlignRight size={16} />;
+      case "left":
+        return <AlignLeft size={16} />;
+      case "right":
+        return <AlignRight size={16} />;
       case "center":
-      default: return <AlignCenter size={16} />;
+      default:
+        return <AlignCenter size={16} />;
     }
   };
 
@@ -77,7 +97,9 @@ export function TextStyleToolbar({ selectedNode, recentColors = [], setRecentCol
           title="Font size"
         >
           {FONT_SIZES.map((s) => (
-             <option key={s} value={s}>{s}px</option>
+            <option key={s} value={s}>
+              {s}px
+            </option>
           ))}
         </select>
       </div>
@@ -86,14 +108,14 @@ export function TextStyleToolbar({ selectedNode, recentColors = [], setRecentCol
 
       {/* Alignment */}
       {["left", "center", "right"].map((align) => (
-         <button
+        <button
           key={align}
           className={`ts-btn ${(ts.align || "center") === align ? "active" : ""}`}
           onClick={() => applyStyle({ align })}
           title={`Align ${align}`}
-         >
+        >
           {getAlignIcon(align)}
-         </button>
+        </button>
       ))}
 
       <div className="ts-divider" />
@@ -113,29 +135,35 @@ export function TextStyleToolbar({ selectedNode, recentColors = [], setRecentCol
         {/* Custom color button */}
         {(() => {
           const currentColor = ts.color || "#ffffff";
-          const isCustom = !COLORS.includes(currentColor) && !recentColors.includes(currentColor);
+          const isCustom =
+            !COLORS.includes(currentColor) &&
+            !recentColors.includes(currentColor);
           return (
             <label
               className={`ts-swatch custom-color-btn ${isCustom ? "active custom-active" : ""}`}
               title="Custom color"
-              style={isCustom ? { background: currentColor, borderStyle: "solid" } : {}}
+              style={
+                isCustom
+                  ? { background: currentColor, borderStyle: "solid" }
+                  : {}
+              }
             >
               {!isCustom && <Plus size={14} color="currentColor" />}
               <input
                 type="color"
                 value={currentColor}
-                onChange={(e) => applyStyle({ color: e.target.value })}
+                onChange={(e) => applyStyle({ color: e.target.value }, false)}
                 onBlur={(e) => {
-                    // Only apply to state on blur so we don't spam recent color history
-                    // when they scroll the color wheel
-                    if(e.target.value !== currentColor) applyStyle({ color: e.target.value });
+                  // Only apply to state on blur so we don't spam recent color history
+                  // when they scroll the color wheel
+                  applyStyle({ color: e.target.value }, true);
                 }}
                 style={{
                   position: "absolute",
                   opacity: 0,
                   width: 0,
                   height: 0,
-                  cursor: "pointer"
+                  cursor: "pointer",
                 }}
               />
             </label>

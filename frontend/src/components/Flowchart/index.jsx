@@ -63,9 +63,10 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
   const [textEditingNodeId, setTextEditingNodeId] = useState(null);
   const [recentColors, setRecentColors] = useState([]);
   const hasSelectedNodes = nodes.some((n) => n.selected);
-  const selectedNode = nodes.filter((n) => n.selected).length === 1
-    ? nodes.find((n) => n.selected)
-    : null;
+  const selectedNode =
+    nodes.filter((n) => n.selected).length === 1
+      ? nodes.find((n) => n.selected)
+      : null;
 
   const circleButtonStyle = {
     width: "40px",
@@ -190,7 +191,10 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
             }}
             onSelectionChange={(params) => {
               // Clear text editing state if selection changes
-              if (params.nodes.length !== 1 || params.nodes[0].id !== textEditingNodeId) {
+              if (
+                params.nodes.length !== 1 ||
+                params.nodes[0].id !== textEditingNodeId
+              ) {
                 setTextEditingNodeId(null);
               }
             }}
@@ -217,8 +221,8 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
             {/* Text style toolbar*/}
             {selectedNode && textEditingNodeId === selectedNode.id && (
               <Panel position="top-center" style={{ margin: "12px 0 0 0" }}>
-                <TextStyleToolbar 
-                  selectedNode={selectedNode} 
+                <TextStyleToolbar
+                  selectedNode={selectedNode}
                   recentColors={recentColors}
                   setRecentColors={setRecentColors}
                 />
@@ -321,18 +325,18 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
               >
                 <MdRedo size={22} color={isDarkMode ? "#f8fafc" : "#334155"} />
               </button>
-              <ExportMenu
-                nodes={nodes}
-                edges={edges}
-                canvasRef={reactFlowWrapper}
-                title={title}
-              />
+
               <button
                 onClick={handleSave}
                 disabled={isSaving}
                 className={isSaving ? "editor-panel-btn" : "editor-save-btn"}
                 style={{
-                  padding: "10px 16px",
+                  padding: "0 16px",
+                  height: "40px",
+                  minWidth: "60px",
+                  boxSizing: "border-box",
+                  fontSize: "14px",
+                  justifyContent: "center",
                   background: isSaving ? "#475569" : "#10b981",
                   color: "white",
                   border: "none",
@@ -346,6 +350,12 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
               >
                 {isSaving ? "Saving..." : "Save"}
               </button>
+              <ExportMenu
+                nodes={nodes}
+                edges={edges}
+                canvasRef={reactFlowWrapper}
+                title={title}
+              />
             </Panel>
 
             <Panel position="bottom right">

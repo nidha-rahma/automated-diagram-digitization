@@ -86,8 +86,8 @@ const nodeTypes = [
           T
         </text>
       </svg>
-    )
-  }
+    ),
+  },
 ];
 
 const presetColors = [
@@ -135,7 +135,7 @@ function Sidebar({ onColorChange, hasSelection }) {
 
       <div className="sidebar-divider"></div>
 
-      <div className="sidebar-header" style={{ marginTop: "10px" }}>
+      <div className="sidebar-header">
         <h2 className="sidebar-title">Fill Color</h2>
         <p className="sidebar-subtitle">Select nodes to colorize</p>
       </div>

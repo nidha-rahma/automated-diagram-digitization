@@ -24,13 +24,17 @@ export function ExportMenu({ nodes, edges, canvasRef, title }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const filename = (title || "flowchart").replace(/[^a-z0-9]/gi, "_").toLowerCase()
+  const filename = (title || "flowchart")
+    .replace(/[^a-z0-9]/gi, "_")
+    .toLowerCase();
 
   // ── JSON ──────────────────────────────────────────────────────────────────
   const handleExportJSON = () => {
     // Build a UUID → number mapping
     const idMap = {};
-    nodes.forEach((node, i) => { idMap[node.id] = String(i + 1); });
+    nodes.forEach((node, i) => {
+      idMap[node.id] = String(i + 1);
+    });
 
     const cleanNodes = nodes.map((node) => ({
       ...node,
@@ -44,7 +48,11 @@ export function ExportMenu({ nodes, edges, canvasRef, title }) {
       target: idMap[edge.target] ?? edge.target,
     }));
 
-    const json = JSON.stringify({ nodes: cleanNodes, edges: cleanEdges }, null, 2);
+    const json = JSON.stringify(
+      { nodes: cleanNodes, edges: cleanEdges },
+      null,
+      2,
+    );
     const blob = new Blob([json], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     downloadFile(url, `${filename}.json`);
@@ -60,11 +68,14 @@ export function ExportMenu({ nodes, edges, canvasRef, title }) {
     const PADDING = 48; // px padding around the diagram
 
     // 1. Compute bounding box of all nodes
-    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    let minX = Infinity,
+      minY = Infinity,
+      maxX = -Infinity,
+      maxY = -Infinity;
     nodes.forEach((node) => {
       const x = node.position.x;
       const y = node.position.y;
-      const w = node.width  || node.style?.width  || 150;
+      const w = node.width || node.style?.width || 150;
       const h = node.height || node.style?.height || 80;
       minX = Math.min(minX, x);
       minY = Math.min(minY, y);
@@ -83,7 +94,7 @@ export function ExportMenu({ nodes, edges, canvasRef, title }) {
       const scale = Math.min(
         (canvasW - PADDING * 2) / bboxW,
         (canvasH - PADDING * 2) / bboxH,
-        1 // never upscale beyond 100%
+        1, // never upscale beyond 100%
       );
       const tx = (canvasW - bboxW * scale) / 2 - minX * scale;
       const ty = (canvasH - bboxH * scale) / 2 - minY * scale;
@@ -97,7 +108,10 @@ export function ExportMenu({ nodes, edges, canvasRef, title }) {
     flowEl.querySelectorAll(".react-flow__edge-textbg").forEach((rect) => {
       const computed = getComputedStyle(rect).fill;
       const original = rect.getAttribute("fill");
-      rect.setAttribute("fill", computed && computed !== "rgb(0, 0, 0)" ? computed : "white");
+      rect.setAttribute(
+        "fill",
+        computed && computed !== "rgb(0, 0, 0)" ? computed : "white",
+      );
       patches.push({ rect, original });
     });
 
@@ -129,7 +143,7 @@ export function ExportMenu({ nodes, edges, canvasRef, title }) {
           filter: (n) =>
             !n.classList?.contains("react-flow__controls") &&
             !n.classList?.contains("react-flow__panel"),
-        })
+        }),
       );
       downloadFile(dataUrl, `${filename}.png`);
     } catch (err) {
@@ -148,7 +162,7 @@ export function ExportMenu({ nodes, edges, canvasRef, title }) {
           filter: (n) =>
             !n.classList?.contains("react-flow__controls") &&
             !n.classList?.contains("react-flow__panel"),
-        })
+        }),
       );
       downloadFile(dataUrl, `${filename}.svg`);
     } catch (err) {
@@ -163,7 +177,7 @@ export function ExportMenu({ nodes, edges, canvasRef, title }) {
         onClick={() => setOpen((prev) => !prev)}
         title="Export diagram"
       >
-        ↓ Export
+        Export
       </button>
 
       {open && (

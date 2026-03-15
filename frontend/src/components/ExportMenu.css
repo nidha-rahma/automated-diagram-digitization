@@ -2,21 +2,34 @@
   position: relative;
 }
 
-/* Trigger button — matches the existing Save button style */
+/* Trigger button — perfectly matches the Save button style */
 .export-trigger-btn {
-  padding: 10px 16px;
-  background: #3b82f6;
+  padding: 0 16px;         
+  height: 40px;            
+  min-width: 80px;        
+  box-sizing: border-box;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
   color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
   font-size: 14px;
-  transition: background 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
 }
 
 .export-trigger-btn:hover {
-  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.6);
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); /* Keeps gradient intact on hover */
+}
+
+.export-trigger-btn:active {
+  transform: translateY(0);
 }
 
 /* Dropdown panel */
