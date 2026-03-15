@@ -279,11 +279,11 @@
 
 /* 3. Apply the dynamic text color to ALL nodes */
 .react-flow__node {
-  color: var(--node-text);
+  color: var(--node-text) !important;
 }
 
 /* 4. Fix for Node Input/Textarea fields (if users double-click to edit) */
 .react-flow__node input,
 .react-flow__node textarea {
-  color: var(--node-text);
+  color: var(--node-text) !important;
 }

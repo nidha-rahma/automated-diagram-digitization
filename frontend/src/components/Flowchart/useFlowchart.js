@@ -286,8 +286,11 @@ export const useFlowchart = (initialData) => {
   );
 
   const changeNodeColor = useCallback(
-    (color) => {
-      takeSnapShot();
+    (color, isFinal = true) => {
+      if (isFinal) {
+        takeSnapShot();
+      }
+
       setNodes((nds) =>
         nds.map((node) => {
           if (node.selected) {

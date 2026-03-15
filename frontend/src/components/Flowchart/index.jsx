@@ -153,12 +153,13 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
         height: "100vh",
         width: "100vw",
         overflow: "hidden",
-        backgroundColor: isDarkMode ? "#0f172a" : "#f8fafc",
+        backgroundColor: isDarkMode ? "#0f172a" : "#F7F7F7",
       }}
     >
       <Sidebar
         onColorChange={changeNodeColor}
         hasSelection={hasSelectedNodes}
+        selectedNode={selectedNode}
       />
       <div
         className="reactflow-wrapper"
@@ -207,7 +208,7 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
               gap={12}
               size={2}
               color={isDarkMode ? "#4f5052" : "#cbd5e1"}
-              style={{ backgroundColor: isDarkMode ? "#171e29" : "#f8fafc" }}
+              style={{ backgroundColor: isDarkMode ? "#171e29" : "#F7f7f7" }}
             />
             <Controls
               style={{

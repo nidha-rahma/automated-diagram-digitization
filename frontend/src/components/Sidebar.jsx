@@ -1,5 +1,6 @@
-import React from "react";
-import "./Sidebar.css"; // We will create this next!
+import React, { useState, useEffect } from "react";
+import { Plus } from "lucide-react";
+import "./Sidebar.css";
 
 // 1. Define the shapes with actual SVG icons so users see what they are dragging
 const nodeTypes = [
@@ -99,7 +100,21 @@ const presetColors = [
   { label: "Purple", value: "var(--color-purple)", hex: "var(--color-purple)" },
 ];
 
-function Sidebar({ onColorChange, hasSelection }) {
+function Sidebar({ onColorChange, hasSelection, selectedNode }) {
+  const [customColor, setCustomColor] = useState("#ffffff");
+
+  useEffect(() => {
+    if (
+      selectedNode &&
+      selectedNode.data?.fill &&
+      selectedNode.data.fill.startsWith("#")
+    ) {
+      setCustomColor(selectedNode.data.fill);
+    } else {
+      setCustomColor("#ffffff");
+    }
+  }, [selectedNode]);
+
   const onDragStart = (event, nodeType) => {
     event.dataTransfer.setData("application/reactflow", nodeType);
     event.dataTransfer.effectAllowed = "all";
@@ -151,6 +166,31 @@ function Sidebar({ onColorChange, hasSelection }) {
             onClick={() => onColorChange(color.value)}
           />
         ))}
+        <label
+          className="color-swatch custom-color-picker"
+          title="Custom color"
+        >
+          <Plus size={18} color="currentColor" />
+          <input
+            type="color"
+            value={customColor}
+            disabled={!hasSelection}
+            onChange={(e) => {
+              setCustomColor(e.target.value);
+              onColorChange(e.target.value, false);
+            }}
+            onBlur={(e) => {
+              onColorChange(e.target.value, true);
+            }}
+            style={{
+              position: "absolute",
+              opacity: 0,
+              width: 0,
+              height: 0,
+              cursor: "pointer",
+            }}
+          />
+        </label>
       </div>
     </aside>
   );

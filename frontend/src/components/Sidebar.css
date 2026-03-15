@@ -191,3 +191,39 @@
 .color-swatch:active:not(:disabled) {
   transform: scale(0.95);
 }
+
+/* ==========================================
+   CUSTOM COLOR PICKER BUTTON
+   ========================================== */
+.custom-color-picker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed rgba(255, 255, 255, 0.4);
+  color: #94a3b8;
+  position: relative;
+  overflow: hidden;
+  box-shadow: none;
+}
+
+.custom-color-picker:hover:not(:disabled) {
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.8);
+  color: #fff;
+  transform: scale(1.05) translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Light Theme overrides for the custom picker */
+.light-theme .custom-color-picker {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.2);
+  color: #64748b;
+  box-shadow: none;
+}
+
+.light-theme .custom-color-picker:hover:not(:disabled) {
+  border-color: rgba(0, 0, 0, 0.4);
+  color: #0f172a;
+}
