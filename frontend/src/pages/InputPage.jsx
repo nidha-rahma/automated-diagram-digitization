@@ -31,6 +31,7 @@ export default function InputPage() {
   const [imageFile, setImageFile] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const [recentFlows, setRecentFlows] = useState([]);
 
   useEffect(() => {
@@ -52,33 +53,26 @@ export default function InputPage() {
     if (activeTab === "image" && imageFile) {
       try {
         setIsLoading(true);
-        // Get JSON from AI
+        setErrorMsg("");
         const flowData = await uploadAndAnalyze(imageFile);
-
-        // Save JSON to PostgreSQL db
         const dbRecord = await createFlowchart(flowData);
-
-        navigate(`/flowchart/${dbRecord.id}`, {
-          state: { flowData: dbRecord.flow_data },
-        });
+        navigate(`/flowchart/${dbRecord.id}`, { state: { flowData: dbRecord.flow_data } });
       } catch (error) {
-        console.error("Analysis failed: ", error);
-        alert("Failed to analyze the flowchart. Is your backend running?");
+        console.error("Analysis failed:", error);
+        setErrorMsg(error.message || "Failed to analyze the flowchart. Is your backend running?");
       } finally {
         setIsLoading(false);
       }
     } else if (activeTab === "prompt" && promptText.trim()) {
       try {
         setIsLoading(true);
+        setErrorMsg("");
         const flowData = await generateFromPrompt(promptText);
         const dbRecord = await createFlowchart(flowData);
-
-        navigate(`/flowchart/${dbRecord.id}`, {
-          state: { flowData: dbRecord.flow_data },
-        });
+        navigate(`/flowchart/${dbRecord.id}`, { state: { flowData: dbRecord.flow_data } });
       } catch (error) {
-        console.error("Prompt generation failed: ", error);
-        alert("Failed to generate flowchart from text. Check console.");
+        console.error("Prompt generation failed:", error);
+        setErrorMsg(error.message || "Failed to generate flowchart from text.");
       } finally {
         setIsLoading(false);
       }
@@ -86,14 +80,12 @@ export default function InputPage() {
       // Quick fallback for the JSON tab!
       try {
         setIsLoading(true);
+        setErrorMsg("");
         const flowData = JSON.parse(jsonText);
         const dbRecord = await createFlowchart(flowData);
-
-        navigate(`/flowchart/${dbRecord.id}`, {
-          state: { flowData: dbRecord.flow_data },
-        });
+        navigate(`/flowchart/${dbRecord.id}`, { state: { flowData: dbRecord.flow_data } });
       } catch (err) {
-        alert("Invalid JSON format");
+        setErrorMsg(err instanceof SyntaxError ? "Invalid JSON format — please check your input." : (err.message || "Failed to load JSON."));
       } finally {
         setIsLoading(false);
       }
@@ -136,6 +128,7 @@ export default function InputPage() {
 
         setJsonText(JSON.stringify(parsedJson, null, 2));
       } catch (err) {
+        console.error("Invalid JSON:", err);
         alert("The uploaded file does not contain valid JSON.");
       }
     };
@@ -444,6 +437,12 @@ export default function InputPage() {
           </div>
 
           <div className="form-footer">
+            {errorMsg && (
+              <div className="error-banner">
+                <span className="error-icon">⚠</span>
+                {errorMsg}
+              </div>
+            )}
             <button
               type="submit"
               className="generate-btn"

@@ -67,7 +67,9 @@ const normaliseAndSnap = (nodes) => {
 
     const targetCenterX = myColumn.averageCenterX;
     const centeredX = targetCenterX - node.finalWidth / 2;
-    const { trueCenterX, finalWidth, ...cleanNode } = node;
+    const cleanNode = { ...node };
+    delete cleanNode.trueCenterX;
+    delete cleanNode.finalWidth;
 
     return {
       ...cleanNode,
@@ -214,7 +216,7 @@ export const useFlowchart = (initialData) => {
         ),
       );
     },
-    [setEdges, takeSnapShot],
+    [setEdges, takeSnapShot, nodes],
   );
 
   const onDragOver = useCallback((event) => {

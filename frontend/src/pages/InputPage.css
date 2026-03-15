@@ -349,6 +349,30 @@
 /* Submit Button */
 .form-footer {
     margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* Inline error banner */
+.error-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.85rem 1.1rem;
+    background: rgba(251, 191, 36, 0.08);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    border-radius: 10px;
+    color: #fbbf24;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    animation: fade-slide-up 0.25s ease forwards;
+}
+
+.error-icon {
+    flex-shrink: 0;
+    font-size: 1rem;
+    margin-top: 1px;
 }
 
 .generate-btn {

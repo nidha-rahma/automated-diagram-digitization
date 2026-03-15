@@ -13,8 +13,16 @@ export function BaseNode({
   const { isEditing, label, onDoubleClick, onBlur, onKeyDown, onChange } =
     useEditableNode(id, data.label);
 
+  const ts = data.textStyle || {};
+  const textStyle = {
+    fontWeight:  ts.bold   ? "bold"   : "normal",
+    fontStyle:   ts.italic ? "italic" : "normal",
+    fontSize:    ts.fontSize ? `${ts.fontSize}px` : "12px",
+    color:       ts.color  || "var(--node-text)",
+    textAlign:   ts.align  || "center",
+  };
+
   return (
-    // Container
     <div
       onDoubleClick={onDoubleClick}
       style={{
@@ -41,30 +49,10 @@ export function BaseNode({
       {children}
 
       {/*Handles (one of each corner) */}
-      <Handle
-        id="top"
-        type="target"
-        position={Position.Top}
-        style={{ background: "#555" }}
-      />
-      <Handle
-        id="bottom"
-        type="source"
-        position={Position.Bottom}
-        style={{ background: "#555" }}
-      />
-      <Handle
-        id="left"
-        type="source"
-        position={Position.Left}
-        style={{ background: "#555" }}
-      />
-      <Handle
-        id="right"
-        type="source"
-        position={Position.Right}
-        style={{ background: "#555" }}
-      />
+      <Handle id="top"    type="target" position={Position.Top}    style={{ background: "#555" }} />
+      <Handle id="bottom" type="source" position={Position.Bottom} style={{ background: "#555" }} />
+      <Handle id="left"   type="source" position={Position.Left}   style={{ background: "#555" }} />
+      <Handle id="right"  type="source" position={Position.Right}  style={{ background: "#555" }} />
 
       {/* Text inside node */}
       <div style={{ width: "100%", zIndex: 1 }}>
@@ -78,16 +66,15 @@ export function BaseNode({
             className="nodrag"
             size={Math.max(label.length, 1)}
             style={{
-              color: "black",
+              ...textStyle,
               border: "none",
-              textAlign: "center",
               outline: "none",
               background: "transparent",
               width: "100%",
             }}
           />
         ) : (
-          <div style={{ color: "var(--node-text)", textAlign: "center" }}>
+          <div style={textStyle}>
             {label}
           </div>
         )}
