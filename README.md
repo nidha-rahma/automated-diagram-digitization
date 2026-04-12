@@ -202,11 +202,95 @@ sequenceDiagram
 ### 3. Database Entity Relationship Diagram (ERD)
 ```mermaid
 erDiagram
+    %% The system relies on a single relational table.
+    %% The complete structural blueprint of each diagram is stored within the JSONB payload.
     FLOWCHART {
-        UUID id PK "Primary Key (Default: uuid4)"
+        UUID id PK "Primary Key (Auto-generated UUID)"
         String title "Default: 'Untitled Flowchart'"
         JSONB flow_data "Stores complete state of nodes and edges"
         DateTime created_at "Timestamp with Timezone"
         DateTime updated_at "Timestamp with Timezone (Auto-updates)"
     }
+```
+
+### 4. System Use Case Diagram
+```mermaid
+graph LR
+    %% Actor
+    User[👤 User]
+
+    %% System Boundary
+    subgraph System[Automated Diagram Digitization System]
+        direction TB
+
+        %% -------- INPUT --------
+        UC1((Convert Image <br>to Flowchart))
+        UC2((Generate from <br>Text Prompt))
+        UC3((Import JSON))
+        UC0((Create Blank <br>Canvas))
+
+        UC1a((Process Image <br>via AI))
+        UC2a((Parse Text <br>via NLP))
+        UC3a((Decode JSON <br>Data))
+
+        %% -------- EDITING --------
+        UC4((Edit Diagram))
+        UC4a((Modify <br>Nodes / Edges))
+        UC4b((Format <br>Text & Colors))
+
+        UC5((Apply <br>Auto-Layout))
+        UC5a((Execute Layout <br>Algorithm))
+
+        UC6((Undo / Redo))
+        UC6a((State <br>Management))
+
+        %% -------- OUTPUT --------
+        UC7((Export <br>Diagram))
+        UC7a((Format as <br>PNG/SVG/JSON))
+
+        %% -------- STORAGE --------
+        UC8((Save <br>Workspace))
+        UC8a((Store Data))
+
+        UC9((Load<br> Workspace))
+        UC9a((Retrieve Data))
+
+        %% -------- RELATIONSHIPS --------
+        UC1 -.->|<<include>>| UC1a
+        UC2 -.->|<<include>>| UC2a
+        UC3 -.->|<<include>>| UC3a
+
+        UC4 -.->|<<include>>| UC4a
+        UC4 -.->|<<include>>| UC4b
+
+        UC5 -.->|<<include>>| UC5a
+        UC6 -.->|<<include>>| UC6a
+        UC7 -.->|<<include>>| UC7a
+
+        UC8 -.->|<<include>>| UC8a
+        UC9 -.->|<<include>>| UC9a
+    end
+
+    %% External Systems
+    Gemini[Gemini AI Service]
+    DB[(Relational Database)]
+
+    %% Actor Connections
+    User --- UC0
+    User --- UC1
+    User --- UC2
+    User --- UC3
+    User --- UC4
+    User --- UC5
+    User --- UC6
+    User --- UC7
+    User --- UC8
+    User --- UC9
+
+    %% External Interactions
+    UC1a --- Gemini
+    UC2a --- Gemini
+    UC3a --- Gemini
+    UC8a --- DB
+    UC9a --- DB
 ```
