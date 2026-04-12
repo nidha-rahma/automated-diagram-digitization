@@ -115,10 +115,6 @@ export const useFlowchart = (initialData) => {
     });
   });
 
-  
-const alignedNodes = normaliseAndSnap(flowData.nodes);
-
-
 
   const { screenToFlowPosition } = useReactFlow();
 

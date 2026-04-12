@@ -22,22 +22,11 @@ import { HistoryContext } from "../../hooks/HistoryContext";
 import { getFlowchart, updateFlowchart } from "../../services/api";
 import { saveToHistory } from "../../services/localHistory";
 
-function FlowCanvas({ initialData, initialTitle, dbId }) {
+function FlowCanvas({ initialData, initialTitle, dbId, theme, toggleTheme }) {
   const reactFlowWrapper = useRef(null);
   const [isSaving, setIsSaving] = useState(false);
   const [title, setTitle] = useState(initialTitle);
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    const savedTheme = localStorage.getItem("clickflow_theme");
-    return savedTheme ? savedTheme === "dark" : true; // Default to dark mode
-  });
-
-  const toggleTheme = () => {
-    setIsDarkMode((prev) => {
-      const newTheme = !prev;
-      localStorage.setItem("clickflow_theme", newTheme ? "dark" : "light");
-      return newTheme;
-    });
-  };
+  const isDarkMode = theme === 'dark';
 
   const {
     nodes,
@@ -427,7 +416,7 @@ function FlowCanvas({ initialData, initialTitle, dbId }) {
   );
 }
 
-export default function Flowchart() {
+export default function Flowchart({ theme, toggleTheme }) {
   const { id } = useParams(); // Get UUID from browser URL
 
   const [flowData, setFlowData] = useState(null);
@@ -463,8 +452,8 @@ export default function Flowchart() {
           height: "100vh",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#0f172a",
-          color: "white",
+          backgroundColor: theme === 'dark' ? "#0f172a" : "#f8fafc",
+          color: theme === 'dark' ? "white" : "black",
         }}
       >
         <Loader2 className="animate-spin" size={48} />
@@ -478,6 +467,8 @@ export default function Flowchart() {
         initialData={flowData || { nodes: [], edges: [] }}
         initialTitle={flowTitle}
         dbId={id}
+        theme={theme}
+        toggleTheme={toggleTheme}
       />
     </ReactFlowProvider>
   );

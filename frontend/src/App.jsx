@@ -18,25 +18,12 @@ export default function App() {
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <div className="theme-toggle-container">
-        <span style={{ fontSize: '16px' }}>Light</span>
-        <label className="theme-toggle-switch">
-          <input
-            type="checkbox"
-            checked={theme === 'dark'}
-            onChange={toggleTheme}
-            aria-label="Toggle dark mode"
-          />
-          <span className="theme-toggle-slider" />
-        </label>
-        <span style={{ fontSize: '16px' }}>Dark</span>
-      </div>
       <Router>
-      <Routes>
-        <Route path="/" element={<InputPage />} />
-        <Route path="/flowchart/:id" element={<Flowchart />} />
-      </Routes>
-    </Router>
+        <Routes>
+          <Route path="/" element={<InputPage theme={theme} toggleTheme={toggleTheme} />} />
+          <Route path="/flowchart/:id" element={<Flowchart theme={theme} toggleTheme={toggleTheme} />} />
+        </Routes>
+      </Router>
     </div>
   );
 }
