@@ -1,6 +1,10 @@
 fastapi
-uvicorn
+uvicorn[standard]
 python-dotenv
 google-genai
 Pillow
 python-multipart
+sqlalchemy[asyncio]
+asyncpg
+greenlet
+pydantic
