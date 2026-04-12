@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import Flowchart from './components/Flowchart';
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import InputPage from "./pages/InputPage";
+import Flowchart from "./components/Flowchart";
 import "./App.css";
 
 export default function App() {
@@ -35,7 +37,12 @@ export default function App() {
         </label>
         <span style={{ fontSize: '16px' }}>Dark</span>
       </div>
-      <Flowchart />
+      <Router>
+      <Routes>
+        <Route path="/" element={<InputPage />} />
+        <Route path="/flowchart/:id" element={<Flowchart />} />
+      </Routes>
+    </Router>
     </div>
   );
 }

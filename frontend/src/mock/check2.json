@@ -1,0 +1,254 @@
+{
+  "nodes": [
+    {
+      "id": "start_node",
+      "type": "start",
+      "position": {
+        "x": 250,
+        "y": 0
+      },
+      "data": {
+        "label": "Return\nStarted"
+      },
+      "width": 120,
+      "height": 60,
+      "style": {
+        "fontSize": 12
+      }
+    },
+    {
+      "id": "scan_book",
+      "type": "io",
+      "position": {
+        "x": 235,
+        "y": 120
+      },
+      "data": {
+        "label": "Scan\nLibrary Book"
+      },
+      "width": 150,
+      "height": 80,
+      "style": {
+        "fontSize": 12
+      }
+    },
+    {
+      "id": "check_overdue",
+      "type": "decision",
+      "position": {
+        "x": 200,
+        "y": 260
+      },
+      "data": {
+        "label": "Is\nthe return\ndate past\nthe due\ndate?"
+      },
+      "width": 220,
+      "height": 220,
+      "style": {
+        "fontSize": 12
+      }
+    },
+    {
+      "id": "calc_fine",
+      "type": "process",
+      "position": {
+        "x": 450,
+        "y": 550
+      },
+      "data": {
+        "label": "Calculate fine\nbased on\ndays late"
+      },
+      "width": 160,
+      "height": 100,
+      "style": {
+        "fontSize": 12
+      }
+    },
+    {
+      "id": "display_fine",
+      "type": "io",
+      "position": {
+        "x": 455,
+        "y": 700
+      },
+      "data": {
+        "label": "Display\ntotal fine\namount"
+      },
+      "width": 150,
+      "height": 80,
+      "style": {
+        "fontSize": 12
+      }
+    },
+    {
+      "id": "update_available",
+      "type": "process",
+      "position": {
+        "x": 0,
+        "y": 550
+      },
+      "data": {
+        "label": "Update status\nto\n'available'"
+      },
+      "width": 150,
+      "height": 100,
+      "style": {
+        "fontSize": 12
+      }
+    },
+    {
+      "id": "return_bin",
+      "type": "process",
+      "position": {
+        "x": 225,
+        "y": 850
+      },
+      "data": {
+        "label": "Place book\nin return\nbin"
+      },
+      "width": 170,
+      "height": 100,
+      "style": {
+        "fontSize": 12
+      }
+    },
+    {
+      "id": "end_node",
+      "type": "start",
+      "position": {
+        "x": 250,
+        "y": 1020
+      },
+      "data": {
+        "label": "Process\nComplete"
+      },
+      "width": 120,
+      "height": 60,
+      "style": {
+        "fontSize": 12
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "source": "start_node",
+      "target": "scan_book",
+      "sourceHandle": "bottom",
+      "targetHandle": "top",
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      }
+    },
+    {
+      "id": "e2",
+      "source": "scan_book",
+      "target": "check_overdue",
+      "sourceHandle": "bottom",
+      "targetHandle": "top",
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      }
+    },
+    {
+      "id": "e3_yes",
+      "source": "check_overdue",
+      "target": "calc_fine",
+      "sourceHandle": "right",
+      "targetHandle": "top",
+      "type": "smoothstep",
+      "label": "Yes",
+      "labelStyle": {
+        "fill": "#000",
+        "fontWeight": 700
+      },
+      "labelBgStyle": {
+        "fill": "#fff",
+        "fillOpacity": 0.9,
+        "stroke": "#000",
+        "strokeWidth": 1
+      },
+      "labelBgPadding": [
+        8,
+        4
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed"
+      }
+    },
+    {
+      "id": "e4_no",
+      "source": "check_overdue",
+      "target": "update_available",
+      "sourceHandle": "left",
+      "targetHandle": "top",
+      "type": "smoothstep",
+      "label": "No",
+      "labelStyle": {
+        "fill": "#000",
+        "fontWeight": 700
+      },
+      "labelBgStyle": {
+        "fill": "#fff",
+        "fillOpacity": 0.9,
+        "stroke": "#000",
+        "strokeWidth": 1
+      },
+      "labelBgPadding": [
+        8,
+        4
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed"
+      }
+    },
+    {
+      "id": "e5",
+      "source": "calc_fine",
+      "target": "display_fine",
+      "sourceHandle": "bottom",
+      "targetHandle": "top",
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      }
+    },
+    {
+      "id": "e6",
+      "source": "display_fine",
+      "target": "return_bin",
+      "sourceHandle": "bottom",
+      "targetHandle": "right",
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      }
+    },
+    {
+      "id": "e7",
+      "source": "update_available",
+      "target": "return_bin",
+      "sourceHandle": "bottom",
+      "targetHandle": "left",
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      }
+    },
+    {
+      "id": "e8",
+      "source": "return_bin",
+      "target": "end_node",
+      "sourceHandle": "bottom",
+      "targetHandle": "top",
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      }
+    }
+  ]
+}

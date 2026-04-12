@@ -1,0 +1,229 @@
+/* Matches the dark theme of the Input Page */
+.sidebar-container {
+  width: 200px;
+  background-color: #0f172a; 
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  color: #f8fafc;
+  font-family: 'Outfit', sans-serif;
+  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  height: 100vh; 
+  overflow-y: auto; 
+  overflow-x: hidden;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.sidebar-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Dark mode scrollbar handle */
+.sidebar-container::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+}
+.sidebar-container::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Light mode scrollbar handle */
+.light-theme .sidebar-container::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.15);
+}
+.light-theme .sidebar-container::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.sidebar-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebar-title {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  margin: 0;
+  font-weight: 700;
+}
+
+.sidebar-subtitle {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Vertical list layout */
+.sidebar-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.shape-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 8px;
+  background: rgba(30, 41, 59, 0.6); /* Glassy panel background */
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  color: #cbd5e1;
+  cursor: grab;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+/* Indigo glowing hover effect */
+.shape-item:hover {
+  background: rgba(99, 102, 241, 0.1);
+  border-color: #6366f1;
+  color: #818cf8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+}
+
+.shape-item:active {
+  cursor: grabbing;
+  transform: translateY(0);
+}
+
+.shape-item.dragging {
+  opacity: 0.5;
+  border-color: #818cf8;
+}
+
+.shape-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shape-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Sidebar Light Theme Overrides */
+.light-theme .sidebar-container {
+  background-color: #ffffff;
+  border-right: 1px solid #e2e8f0;
+  color: #0f172a;
+}
+.light-theme .sidebar-title {
+  color: #334155;
+}
+.light-theme .sidebar-subtitle {
+  color: #64748b;
+}
+.light-theme .shape-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+}
+.light-theme .shape-item:hover {
+  background: #e0e7ff;
+  border-color: #818cf8;
+  color: #4f46e5;
+}
+
+/* Sidebar Divider */
+.sidebar-divider {
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+.light-theme .sidebar-divider {
+  background-color: #e2e8f0;
+}
+
+/* Color Palette Grid */
+.color-palette {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  transition: opacity 0.2s ease;
+}
+
+.color-palette.disabled {
+  opacity: 0.4;
+  pointer-events: none; /* Prevents clicking when nothing is selected */
+}
+
+/* Individual Color Swatches */
+.color-swatch {
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.1);
+}
+
+.light-theme .color-swatch {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.5);
+}
+
+.color-swatch:hover:not(:disabled) {
+  transform: scale(1.05) translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.light-theme .color-swatch:hover:not(:disabled) {
+  border-color: rgba(0, 0, 0, 0.3);
+}
+
+.color-swatch:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+/* ==========================================
+   CUSTOM COLOR PICKER BUTTON
+   ========================================== */
+.custom-color-picker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed rgba(255, 255, 255, 0.4);
+  color: #94a3b8;
+  position: relative;
+  overflow: hidden;
+  box-shadow: none;
+}
+
+.custom-color-picker:hover:not(:disabled) {
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.8);
+  color: #fff;
+  transform: scale(1.05) translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Light Theme overrides for the custom picker */
+.light-theme .custom-color-picker {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.2);
+  color: #64748b;
+  box-shadow: none;
+}
+
+.light-theme .custom-color-picker:hover:not(:disabled) {
+  border-color: rgba(0, 0, 0, 0.4);
+  color: #0f172a;
+}

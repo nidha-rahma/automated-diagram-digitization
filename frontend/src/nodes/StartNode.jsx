@@ -1,6 +1,8 @@
 import { BaseNode } from "./BaseNode";
 
 export function StartNode(props) {
+  const customFill = props.data?.fill;
+
   return (
     <BaseNode {...props}>
       <div
@@ -10,7 +12,7 @@ export function StartNode(props) {
           left: 0,
           right: 0,
           bottom: 0,
-          background: "var(--node-bg)",
+          background: customFill || "var(--node-bg)",
           border: "1px solid var(--node-border)",
           borderRadius: "50px",
           zIndex: -1,

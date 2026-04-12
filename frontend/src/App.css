@@ -65,6 +65,252 @@
   color: #888;
 }
 
+.react-flow__node.selected {
+  box-shadow: 0 0 0 2px #0f172a, 0 0 0 4px #818cf8 !important;
+  border-radius: 4px; /* Softens the highlight corners */
+  transition: box-shadow 0.15s ease-in-out;
+}
+
+/* 2. Professional Edge (Arrow) Selection */
+/* Changes the line color and adds a subtle glow */
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: #818cf8 !important; 
+  /* CRITICAL: Locking the stroke width prevents the arrowhead from becoming giant! */
+  stroke-width: 2px !important; 
+  filter: drop-shadow(0 0 4px rgba(129, 140, 248, 0.4));
+}
+
+/* 3. Hide the default React Flow focus outline box */
+.react-flow__node:focus {
+  outline: none !important;
+}
+.react-flow__edge:focus {
+  outline: none !important;
+}
+
+/* 4. Optional: Make the standard edges look slightly cleaner */
+.react-flow__edge-path {
+  transition: stroke 0.2s ease, stroke-width 0.2s ease;
+}
+
+.reactflow-wrapper {
+  background-color: #0f172a;
+}
+
+/* Glassmorphism Title Input */
+.editor-title-input {
+  color: #f8fafc !important;
+  background-color: rgba(30, 41, 59, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.editor-title-input:hover {
+  border-color: rgba(129, 140, 248, 0.5) !important;
+  background-color: rgba(30, 41, 59, 0.9) !important;
+}
+.editor-title-input:focus {
+  border-color: #6366f1 !important;
+  background-color: rgba(15, 23, 42, 0.95) !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
+}
+
+/* Glassmorphism Panel Buttons (Undo, Redo, AutoLayout) */
+.editor-panel-btn {
+  background: rgba(54, 58, 70, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(10px);
+  color: #cbd5e1 !important;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.editor-panel-btn:hover:not(:disabled) {
+  background: rgba(99, 102, 241, 0.15) !important;
+  border-color: #6366f1 !important;
+  color: #fff !important;
+  transform: translateY(-2px);
+}
+
+/* Primary Action Button (Save) */
+.editor-save-btn {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4) !important;
+  border: none !important;
+  color: white !important;
+  transition: all 0.2s ease;
+}
+.editor-save-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.6) !important;
+}
+
+/* .react-flow__handle {
+  width: 3px !important;
+  height: 3px !important;
+  background-color: #000000 !important; 
+  border: 2px solid #cbd5e1 !important;
+  cursor: crosshair;
+} */
+
+/* 2. Make Node Resizer corners larger (If you are using NodeResizer) */
+/* .react-flow__resize-control.handle {
+  width: 6px !important;
+  height: 6px !important;
+  background-color: #000000 !important;
+  border: 2px solid #ffffff !important;
+  border-radius: 4px !important;
+  transition: all 0.2s ease;
+} */
+
+.light-theme {
+  background-color: #f8fafc;
+}
+
+.light-theme .reactflow-wrapper {
+  background-color: #f8fafc;
+}
+
+/* Light Theme: Title Input */
+.light-theme .editor-title-input {
+  color: #0f172a !important;
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+.light-theme .editor-title-input:hover {
+  border-color: rgba(99, 102, 241, 0.5) !important;
+  background-color: #ffffff !important;
+}
+.light-theme .editor-title-input:focus {
+  background-color: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+}
+
+/* Light Theme: Panel Buttons */
+.light-theme .editor-panel-btn {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  color: #334155 !important;
+}
+.light-theme .editor-panel-btn:hover:not(:disabled) {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #6366f1 !important;
+}
+
+/* Light Theme: React Flow Zoom Controls */
+.light-theme .react-flow__controls-button {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  fill: #334155;
+}
+.dark-theme .react-flow__controls-button {
+  background-color: rgba(30, 41, 59, 0.7);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  fill: #f8fafc;
+}
+
+/* ==========================================
+   LIGHT THEME CANVAS ELEMENTS (Nodes & Edges)
+   ========================================== */
+
+/* 1. Node Text and Shape Borders */
+/* This makes the text dark slate, and if your SVGs use 'currentColor', it fixes the borders instantly! */
+.light-theme .react-flow__node {
+  color: #1e293b !important; 
+}
+
+/* Fallback: Forces any hardcoded white SVG strokes to turn dark slate */
+.light-theme .react-flow__node svg path,
+.light-theme .react-flow__node svg rect,
+.light-theme .react-flow__node svg polygon,
+.light-theme .react-flow__node svg circle {
+  stroke: #1e293b !important;
+}
+
+/* 2. Edges (The connection lines) */
+.light-theme .react-flow__edge-path {
+  stroke: #64748b !important; /* Medium slate blue for a softer look */
+}
+
+/* 3. Edge Arrowheads (The triangles) */
+/* React Flow puts markers in a separate <defs> block, so we target them like this: */
+.light-theme marker polygon,
+.light-theme marker path {
+  fill: #64748b !important;
+  stroke: #64748b !important;
+}
+
+/* 4. Edge Text Labels (e.g., "Yes" / "No") */
+.light-theme .react-flow__edge-text {
+  fill: #1e293b !important;
+}
+
+/* 5. Selection Highlight for Light Mode */
+/* Replaces the dark inner-ring with a white inner-ring so it pops beautifully */
+.light-theme .react-flow__node.selected {
+  box-shadow: 0 0 0 2px #f8fafc, 0 0 0 4px #6366f1 !important; 
+}
+
+.light-theme .react-flow__edge.selected .react-flow__edge-path {
+  stroke: #6366f1 !important; /* Bright indigo when selected */
+  filter: drop-shadow(0 0 4px rgba(99, 102, 241, 0.3));
+}
+
+/* 6. Connection Dots / Handles */
+.light-theme .react-flow__handle {
+  background-color: #f8fafc !important;
+  border-color: #64748b !important;
+}
+.light-theme .react-flow__handle:hover {
+  background-color: #6366f1 !important;
+  border-color: #fff !important;
+}
+
+
+/* ==========================================
+   DYNAMIC NODE COLORS (CSS VARIABLES)
+   ========================================== */
+
+/* 1. Default (Dark Mode) colors */
+:root {
+  --node-bg: #ffffff;      /* Dark slate background (so white text is visible!) */
+  --node-border: #475569;  /* Subtle grey-blue border */
+  --node-text: #000000;
+  --edge-color: #ffffff;    /* Pure white text */
+
+  --color-red: #fecaca;
+  --color-green: #bbf7d0;
+  --color-blue: #bfdbfe;
+  --color-yellow: #fef08a;
+  --color-purple: #e9d5ff;
+}
+
+/* 2. Light Theme colors */
+.light-theme {
+  --node-bg: #504f52;      /* Soft indigo background */
+  --node-border: #ffffff;  /* Vibrant indigo border */
+  --node-text: #e4e3e3;
+  --edge-color: #504f52;    /* Pure black text */
+
+  --color-red: #7f1d1d;
+  --color-green: #14532d;
+  --color-blue: #1e3a8a;
+  --color-yellow: #a1860c;
+  --color-purple: #4c1d95;
+}
+
+/* 3. Apply the dynamic text color to ALL nodes */
+.react-flow__node {
+  color: var(--node-text) !important;
+}
+
+/* 4. Fix for Node Input/Textarea fields (if users double-click to edit) */
+.react-flow__node input,
+.react-flow__node textarea {
+  color: var(--node-text) !important;
+}
+
 /* Animated Toggle Switch */
 .theme-toggle-switch {
   position: relative;

@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
   useNodesState,
   useEdgesState,
@@ -6,7 +6,6 @@ import {
   useReactFlow,
   MarkerType,
 } from "reactflow";
-import flowData from "../../mock/loop_flow.json";
 
 // Dynamic column snapping (1D Clustering)
 // Assigning specific columns to nodes based on their X value
@@ -19,87 +18,195 @@ const normaliseAndSnap = (nodes) => {
   };
 
   nodes.forEach((node) => {
+    const nodeWidth =
+      node.width || (node.style && node.style.width) || maxWidths[node.type];
     // Update maxWidths with maximum width of each node
-    if (node.width && node.width > maxWidths[node.type]) {
-      maxWidths[node.type] = node.width;
+    if (nodeWidth > maxWidths[node.type]) {
+      maxWidths[node.type] = nodeWidth;
     }
   });
 
-  const TOLERANCE = 100;
+  const TOLERANCE = 150;
   const columns = [];
 
+  const nodesWithCenters = nodes.map((node) => {
+    const finalWidth = maxWidths[node.type];
+    const trueCenterX = node.position.x + finalWidth / 2;
+    return { ...node, trueCenterX, finalWidth };
+  });
+
   // Sort nodes based on X value
-  const sortedNodes = [...nodes].sort((a, b) => a.position.x - b.position.x);
+  const sortedNodes = [...nodesWithCenters].sort(
+    (a, b) => a.trueCenterX - b.trueCenterX,
+  );
 
   sortedNodes.forEach((node) => {
-    const x = node.position.x;
+    const cx = node.trueCenterX;
 
     // Checks if node belongs to an existing column
     const existingCol = columns.find(
-      (col) => Math.abs(col.averageX - x) < TOLERANCE,
+      (col) => Math.abs(col.averageCenterX - cx) < TOLERANCE,
     );
 
     if (existingCol) {
       // Add node to exisitng cols
-      existingCol.xValues.push(x);
-      existingCol.averageX =
-        existingCol.xValues.reduce((sum, val) => sum + val, 0) /
-        existingCol.xValues.length;
+      existingCol.centerValues.push(cx);
+      existingCol.averageCenterX =
+        existingCol.centerValues.reduce((sum, val) => sum + val, 0) /
+        existingCol.centerValues.length;
     } else {
       // Create new col
-      columns.push({ xValues: [x], averageX: [x] });
+      columns.push({ centerValues: [cx], averageCenterX: cx });
     }
   });
 
-  return nodes.map((node) => {
+  return nodesWithCenters.map((node) => {
     const myColumn = columns.find(
-      (col) => Math.abs(col.averageX - node.position.x) < TOLERANCE,
+      (col) => Math.abs(col.averageCenterX - node.trueCenterX) < TOLERANCE,
     );
 
-    const targetCenterX = myColumn.averageX;
-    const finalWidth = maxWidths[node.type];
-    const centeredX = targetCenterX - finalWidth / 2;
+    const targetCenterX = myColumn.averageCenterX;
+    const centeredX = targetCenterX - node.finalWidth / 2;
+    const cleanNode = { ...node };
+    delete cleanNode.trueCenterX;
+    delete cleanNode.finalWidth;
 
     return {
-      ...node,
-      style: { ...node.style, width: finalWidth },
+      ...cleanNode,
+      style: { ...cleanNode.style, width: node.finalWidth },
       position: {
         x: centeredX,
-        y: node.position.y,
+        y: cleanNode.position.y,
       },
     };
   });
 };
 
-// Map edges using json
-const initialEdges = flowData.edges.map((edge) => {
-  const isVerticalDrop =
-    edge.sourceHandle === "bottom" && edge.targetHandle === "top";
+export const useFlowchart = (initialData) => {
+  const initialSnappedNodes =
+    initialData?.nodes?.length > 0 ? normaliseAndSnap(initialData.nodes) : [];
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialSnappedNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(() => {
+    const rawEdges = initialData?.edges || [];
+    return rawEdges.map((edge) => {
+      let isVerticalDrop =
+        edge.sourceHandle === "bottom" && edge.targetHandle === "top";
 
-  return {
-    ...edge,
-    type: isVerticalDrop ? "straight" : "smoothstep",
-    markerEnd: {
-      type: MarkerType.ArrowClosed,
-      width: 20,
-      height: 20,
-      color: "var(--edge-color)",
-    },
-    style: { stroke: "var(--edge-color)" },
-  };
-});
+      const sourceNode = initialSnappedNodes.find((n) => n.id === edge.source);
+      const targetNode = initialSnappedNodes.find((n) => n.id === edge.target);
 
+      if (sourceNode && targetNode) {
+        if (Math.abs(sourceNode.position.x - targetNode.position.x) > 50) {
+          isVerticalDrop = false;
+        }
+      }
+
+      return {
+        ...edge,
+        type: isVerticalDrop ? "straight" : "smoothstep",
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          width: 20,
+          height: 20,
+          color: "var(--edge-color)",
+        },
+        style: { stroke: "var(--edge-color)" },
+      };
+    });
+  });
+
+  
 const alignedNodes = normaliseAndSnap(flowData.nodes);
 
-export const useFlowchart = () => {
-  const [nodes, setNodes, onNodesChange] = useNodesState(alignedNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+
+
   const { screenToFlowPosition } = useReactFlow();
+
+  // History State
+  const [past, setPast] = useState([]);
+  const [future, setFuture] = useState([]);
+
+  const takeSnapShot = useCallback(() => {
+    const nodesCopy = JSON.parse(JSON.stringify(nodes));
+    const edgesCopy = JSON.parse(JSON.stringify(edges));
+
+    setPast((p) => [...p, { nodes: nodesCopy, edges: edgesCopy }]);
+    setFuture([]);
+  }, [nodes, edges]);
+
+  const undo = useCallback(() => {
+    if (past.length === 0) return;
+    const prevState = past[past.length - 1];
+
+    const nodesCopy = JSON.parse(JSON.stringify(nodes));
+    const edgesCopy = JSON.parse(JSON.stringify(edges));
+
+    setFuture((f) => [{ nodes: nodesCopy, edges: edgesCopy }, ...f]);
+    setPast((p) => p.slice(0, p.length - 1));
+
+    setNodes(prevState.nodes);
+    setEdges(prevState.edges);
+  }, [nodes, edges, past, setNodes, setEdges]);
+
+  const redo = useCallback(() => {
+    if (future.length === 0) return;
+    const nextState = future[0];
+
+    const nodesCopy = JSON.parse(JSON.stringify(nodes));
+    const edgesCopy = JSON.parse(JSON.stringify(edges));
+
+    setPast((p) => [...p, { nodes: nodesCopy, edges: edgesCopy }]);
+    setFuture((f) => f.slice(1));
+
+    setNodes(nextState.nodes);
+    setEdges(nextState.edges);
+  }, [nodes, edges, future, setNodes, setEdges]);
+
+  const applyAutoLayout = useCallback(() => {
+    takeSnapShot();
+
+    setNodes((currentNodes) => {
+      const newlyAlignedNodes = normaliseAndSnap(currentNodes);
+
+      setEdges((currentEdges) =>
+        currentEdges.map((edge) => {
+          let isVerticalDrop =
+            edge.sourceHandle === "bottom" && edge.targetHandle === "top";
+          const sourceNode = newlyAlignedNodes.find(
+            (n) => n.id === edge.source,
+          );
+          const targetNode = newlyAlignedNodes.find(
+            (n) => n.id === edge.target,
+          );
+
+          if (sourceNode && targetNode) {
+            if (Math.abs(sourceNode.position.x - targetNode.position.x) > 50) {
+              isVerticalDrop = false;
+            }
+          }
+
+          return { ...edge, type: isVerticalDrop ? "straight" : "smoothstep" };
+        }),
+      );
+      return newlyAlignedNodes;
+    });
+  }, [setNodes, setEdges, takeSnapShot]);
 
   const onConnect = useCallback(
     (params) => {
-      const isVerticalDrop =
+      takeSnapShot();
+      let isVerticalDrop =
         params.sourceHandle === "bottom" && params.targetHandle === "top";
+
+      const sourceNode = nodes.find((n) => n.id === params.source);
+      const targetNode = nodes.find((n) => n.id === params.target);
+
+      if (sourceNode && targetNode) {
+        if (Math.abs(sourceNode.position.x - targetNode.position.x) > 50) {
+          isVerticalDrop = false;
+        }
+      }
+
       setEdges((eds) =>
         addEdge(
           {
@@ -115,7 +222,7 @@ export const useFlowchart = () => {
         ),
       );
     },
-    [setEdges],
+    [setEdges, takeSnapShot, nodes],
   );
 
   const onDragOver = useCallback((event) => {
@@ -128,6 +235,8 @@ export const useFlowchart = () => {
       event.preventDefault();
       const type = event.dataTransfer.getData("application/reactflow");
       if (!type) return;
+
+      takeSnapShot();
 
       const position = screenToFlowPosition({
         x: event.clientX,
@@ -142,7 +251,7 @@ export const useFlowchart = () => {
         defaultW = 120;
         defaultH = 120;
       } else if (type === "start") {
-        defaultW = 80;
+        defaultW = 90;
         defaultH = 40;
       } else if (type === "io") {
         defaultW = 100;
@@ -159,8 +268,109 @@ export const useFlowchart = () => {
 
       setNodes((nds) => nds.concat(newNode));
     },
-    [screenToFlowPosition, setNodes],
+    [screenToFlowPosition, setNodes, takeSnapShot],
   );
+
+  const onNodesDelete = useCallback(
+    (deleted) => {
+      takeSnapShot();
+      setNodes((nds) =>
+        nds.filter((node) => !deleted.find((d) => d.id === node.id)),
+      );
+    },
+    [setNodes, takeSnapShot],
+  );
+
+  const onEdgesDelete = useCallback(
+    (deleted) => {
+      takeSnapShot();
+      setEdges((eds) =>
+        eds.filter((edge) => !deleted.find((d) => d.id === edge.id)),
+      );
+    },
+    [setEdges, takeSnapShot],
+  );
+
+  const changeNodeColor = useCallback(
+    (color, isFinal = true) => {
+      if (isFinal) {
+        takeSnapShot();
+      }
+
+      setNodes((nds) =>
+        nds.map((node) => {
+          if (node.selected) {
+            return {
+              ...node,
+              data: { ...node.data, fill: color },
+            };
+          }
+          return node;
+        }),
+      );
+    },
+    [setNodes, takeSnapShot],
+  );
+
+  const updateEdgeLabel = useCallback(
+    (edgeId, newLabel) => {
+      takeSnapShot();
+
+      setEdges((eds) =>
+        eds.map((edge) => {
+          if (edge.id === edgeId) {
+            return {
+              ...edge,
+              label: newLabel,
+              labelStyle: {
+                fill: "var(--node-text)",
+                fontWeight: 600,
+                fontSize: 12,
+              },
+              labelBgStyle: {
+                fill: "var(--node-bg)",
+                stroke: "var(--node-border)",
+                strokeWidth: 1.5,
+                rx: 4,
+                ry: 4,
+              },
+              labelBgPadding: [8, 4],
+            };
+          }
+          return edge;
+        }),
+      );
+    },
+    [setEdges, takeSnapShot],
+  );
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (
+        event.target.tagName === "INPUT" ||
+        event.target.tagName === "TEXTAREA"
+      ) {
+        return;
+      }
+
+      if (event.ctrlKey) {
+        if (event.key.toLowerCase() === "z") {
+          if (event.shiftKey) {
+            event.preventDefault();
+            redo();
+          } else {
+            event.preventDefault();
+            undo();
+          }
+        } else if (event.key.toLowerCase() === "y") {
+          redo();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [undo, redo]);
 
   return {
     nodes,
@@ -170,5 +380,15 @@ export const useFlowchart = () => {
     onConnect,
     onDragOver,
     onDrop,
+    applyAutoLayout,
+    undo,
+    redo,
+    past,
+    future,
+    takeSnapShot,
+    onNodesDelete,
+    onEdgesDelete,
+    updateEdgeLabel,
+    changeNodeColor,
   };
 };

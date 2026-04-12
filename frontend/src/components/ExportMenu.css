@@ -1,0 +1,97 @@
+.export-menu-wrapper {
+  position: relative;
+}
+
+/* Trigger button — perfectly matches the Save button style */
+.export-trigger-btn {
+  padding: 0 16px;         
+  height: 40px;            
+  min-width: 80px;        
+  box-sizing: border-box;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.export-trigger-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.6);
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); /* Keeps gradient intact on hover */
+}
+
+.export-trigger-btn:active {
+  transform: translateY(0);
+}
+
+/* Dropdown panel */
+.export-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  min-width: 160px;
+  overflow: hidden;
+  z-index: 1000;
+  animation: fadeIn 0.12s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Individual option rows */
+.export-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  color: #e2e8f0;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.12s ease;
+  text-align: left;
+}
+
+.export-option:hover {
+  background: rgba(99, 102, 241, 0.15);
+  color: #818cf8;
+}
+
+.export-icon {
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+}
+
+/* Light theme overrides */
+.light-theme .export-dropdown {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.light-theme .export-option {
+  color: #334155;
+}
+
+.light-theme .export-option:hover {
+  background: #e0e7ff;
+  color: #4f46e5;
+}
