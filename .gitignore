@@ -24,6 +24,13 @@
 /backend/*.pyc
 
 # =========================
+# Root-level artifacts
+# =========================
+/node_modules/
+/venv/
+*.log
+
+# =========================
 # Environment Files (Global)
 # =========================
 .env

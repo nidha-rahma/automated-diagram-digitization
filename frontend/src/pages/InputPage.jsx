@@ -13,6 +13,7 @@ import {
   PenTool,
   Trash2,
 } from "lucide-react";
+import { MdDarkMode, MdLightMode } from "react-icons/md";
 import "./InputPage.css";
 import {
   uploadAndAnalyze,
@@ -21,7 +22,7 @@ import {
 } from "../services/api";
 import { getHistory, removeFromHistory } from "../services/localHistory";
 
-export default function InputPage() {
+export default function InputPage({ theme, toggleTheme }) {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("image");
 
@@ -158,6 +159,40 @@ export default function InputPage() {
 
   return (
     <div className="input-page-container">
+      <div className="theme-toggle-container">
+        <button
+          onClick={toggleTheme}
+          title={theme === 'dark' ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          style={{
+            background: "rgba(255, 255, 255, 0.1)",
+            border: "1px solid rgba(255, 255, 255, 0.2)",
+            borderRadius: "50%",
+            width: "40px",
+            height: "40px",
+            padding: 0,
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            transition: "all 0.2s ease",
+            backdropFilter: "blur(10px)",
+            boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = "scale(1.05)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = "scale(1)";
+          }}
+        >
+          {theme === 'dark' ? (
+            <MdLightMode size={22} color="#f8fafc" />
+          ) : (
+            <MdDarkMode size={22} color="#334155" />
+          )}
+        </button>
+      </div>
+
       <div className="background-shapes">
         <div className="shape shape-1"></div>
         <div className="shape shape-2"></div>

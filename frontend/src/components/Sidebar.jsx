@@ -196,4 +196,34 @@ function Sidebar({ onColorChange, hasSelection, selectedNode }) {
   );
 }
 
+const styles = {
+  sidebar: {
+    width: 200,
+    padding: "15px",
+    borderRight: "1px solid var(--node-border)",
+    backgroundColor: "var(--sidebar-bg)",
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
+  },
+  description: {
+    fontSize: "12px",
+    marginBottom: "10px",
+    color: "var(--global-text)",
+    opacity: 0.7,
+  },
+  item: {
+    padding: "10px",
+    border: "1px solid var(--node-border)",
+    borderRadius: "5px",
+    backgroundColor: "var(--node-bg)",
+    color: "var(--node-text)",
+    cursor: "grab",
+    textAlign: "center",
+    fontWeight: "500",
+    transition: "all 0.2s ease",
+    userSelect: "none", // Prevents text highlighting while dragging
+  },
+};
+
 export default Sidebar;

@@ -19,7 +19,7 @@ export const defaultEdgeOptions = {
     type: MarkerType.ArrowClosed,
     width: 20,
     height: 20,
-    color: "#000",
+    color: "var(--edge-color)",
   },
-  style: { stroke: "#000" },
+  style: { stroke: "var(--edge-color)" },
 };

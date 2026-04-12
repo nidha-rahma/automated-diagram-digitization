@@ -6,9 +6,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #0f172a;
+    background-color: var(--bg-color);
     font-family: 'Outfit', sans-serif;
-    color: #f8fafc;
+    color: var(--global-text);
     position: relative;
     overflow: hidden;
     padding: 2rem;

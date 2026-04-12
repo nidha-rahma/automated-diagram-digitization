@@ -15,6 +15,7 @@ export function DecisionNode(props) {
           left: 0,
           background: customFill || "var(--node-bg)",
           border: "1px solid var(--node-border)",
+          
           // Clip the sqaure into a diamond
           clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)",
           zIndex: -1,
