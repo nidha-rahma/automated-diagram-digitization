@@ -18,15 +18,7 @@ export default function App() {
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <div style={{
-        position: 'absolute',
-        top: '20px',
-        right: '20px',
-        zIndex: 1000,
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-      }}>
+      <div className="theme-toggle-container">
         <span style={{ fontSize: '16px' }}>Light</span>
         <label className="theme-toggle-switch">
           <input
