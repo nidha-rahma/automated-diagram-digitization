@@ -102,6 +102,7 @@ The backend exposes the following primary RESTful endpoints:
 - `POST /analyze` - Processes `multipart/form-data` uploads of images and queries the visual-language model to map structural elements.
 - `POST /analyze/algorithm` - Uses a text prompt to build a semantic structured flowchart.
 - `POST /flowcharts` - Saves a flowchart configuration persistently into the database.
+- `GET /flowcharts` - Retrieves a list of all saved flowchart summaries (ID, title, and timestamps).
 - `GET /flowcharts/{flowchart_id}` - Retrieves a specific flowchart blueprint using its UUID.
 - `PUT /flowcharts/{flowchart_id}` - Overwrites an existing specific diagram's properties.
 
