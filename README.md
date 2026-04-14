@@ -99,7 +99,7 @@ The platform operates on a robust three-tier architecture:
 
 ## API Endpoints
 The backend exposes the following primary RESTful endpoints:
-- `POST /analyze` - Processes `multipart/form-data` uploads of images and queries the visual-language model to map structural elements.
+- `POST /analyze/image` - Processes `multipart/form-data` uploads of images and queries the visual-language model to map structural elements.
 - `POST /analyze/algorithm` - Uses a text prompt to build a semantic structured flowchart.
 - `POST /flowcharts` - Saves a flowchart configuration persistently into the database.
 - `GET /flowcharts` - Retrieves a list of all saved flowchart summaries (ID, title, and timestamps).
@@ -180,7 +180,7 @@ sequenceDiagram
     participant Gemini as Gemini API (AI Model)
     participant DB as PostgreSQL (Database)
 
-    User->>FastAPI: POST /analyze (Image) OR /analyze/algorithm (Text)
+    User->>FastAPI: POST /analyze/image (Image) OR /analyze/algorithm (Text)
     activate FastAPI
     FastAPI->>FastAPI: Validate Input & Prepare Prompt
     FastAPI->>Gemini: Send Image/Text + System Prompt

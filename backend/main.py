@@ -77,7 +77,7 @@ app.add_middleware(
 )
 
 # Uploads an image and returns graph json
-@app.post('/analyze')
+@app.post('/analyze/image')
 async def analyze_flowchart(file: UploadFile = File(...)):
     try:
         contents = await file.read()
