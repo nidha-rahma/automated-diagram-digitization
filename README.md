@@ -107,8 +107,11 @@ The backend exposes the following primary RESTful endpoints:
 - `PUT /flowcharts/{flowchart_id}` - Overwrites an existing specific diagram's properties.
 
 ## Team
-- Nidha
-- Rahma
+- Nema Fathima
+- Nidha Rahma
+- Rithuparna JB
+- Rose Maria
+- Sana Noushad
 
 ## AI Tools Used
 - **Google Gemini API (Flash Model):** Leveraged for its high-speed multimodal capabilities. The model parses images of logical sequences directly into the strict JSON formats (`nodes` and `edges`) necessary to seed the frontend ReactFlow framework, bypassing classical manual visual digitizing.
