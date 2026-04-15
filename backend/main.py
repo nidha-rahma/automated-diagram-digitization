@@ -64,7 +64,7 @@ app = FastAPI(lifespan=lifespan)
 # Add cors middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["click-flow-git-main-nidha-rahmas-projects.vercel.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
