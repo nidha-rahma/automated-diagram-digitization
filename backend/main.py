@@ -64,7 +64,7 @@ app = FastAPI(lifespan=lifespan)
 # Add cors middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["https://click-flow-git-main-nidha-rahmas-projects.vercel.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -78,11 +78,18 @@ async def analyze_flowchart(file: UploadFile = File(...)):
         image = Image.open(io.BytesIO(contents))
         image.thumbnail((1024, 1024))
 
+        img_byte_arr = io.BytesIO()
+        image.save(img_byte_arr, format="PNG")
+        img_bytes = img_byte_arr.getvalue()
+
         response = client.models.generate_content(
             model="gemini-flash-latest",
-            contents=[SYSTEM_PROMPT, image],
+            contents=[
+                SYSTEM_PROMPT,
+                {"mime_type": "image/png", "data": img_bytes}
+            ],
             config={
-                "temperature": 0, 
+                "temperature": 0,
                 "response_mime_type": "application/json"
             }
         )
