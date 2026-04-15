@@ -78,18 +78,11 @@ async def analyze_flowchart(file: UploadFile = File(...)):
         image = Image.open(io.BytesIO(contents))
         image.thumbnail((1024, 1024))
 
-        img_byte_arr = io.BytesIO()
-        image.save(img_byte_arr, format="PNG")
-        img_bytes = img_byte_arr.getvalue()
-
         response = client.models.generate_content(
             model="gemini-flash-latest",
-            contents=[
-                SYSTEM_PROMPT,
-                {"mime_type": "image/png", "data": img_bytes}
-            ],
+            contents=[SYSTEM_PROMPT, image],
             config={
-                "temperature": 0,
+                "temperature": 0, 
                 "response_mime_type": "application/json"
             }
         )
