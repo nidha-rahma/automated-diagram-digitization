@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Plus } from "lucide-react";
+import { Plus, ChevronLeft, Menu } from "lucide-react";
 import "./Sidebar.css";
 
 // 1. Define the shapes with actual SVG icons so users see what they are dragging
@@ -100,7 +100,7 @@ const presetColors = [
   { label: "Purple", value: "var(--color-purple)", hex: "var(--color-purple)" },
 ];
 
-function Sidebar({ onColorChange, hasSelection, selectedNode }) {
+function Sidebar({ onColorChange, hasSelection, selectedNode, addNodeAtCenter, isOpen, onToggle }) {
   const [customColor, setCustomColor] = useState("#ffffff");
 
   useEffect(() => {
@@ -125,11 +125,30 @@ function Sidebar({ onColorChange, hasSelection, selectedNode }) {
     event.target.classList.remove("dragging");
   };
 
+  const handleShapeClick = (type) => {
+    if (addNodeAtCenter) {
+      addNodeAtCenter(type);
+      // On mobile viewports, it's often better to close the drawer after selection
+      if (window.innerWidth <= 768) {
+        onToggle();
+      }
+    }
+  };
+
   return (
-    <aside className="sidebar-container">
+    <>
+      <button 
+        className={`sidebar-toggle-btn ${isOpen ? 'open' : ''}`}
+        onClick={onToggle}
+        title={isOpen ? "Close Sidebar" : "Open Sidebar"}
+      >
+        {isOpen ? <ChevronLeft size={20} /> : <Menu size={20} />}
+      </button>
+
+      <aside className={`sidebar-container ${isOpen ? 'open' : 'closed'}`}>
       <div className="sidebar-header">
         <h2 className="sidebar-title">Standard Shapes</h2>
-        <p className="sidebar-subtitle">Drag & drop to canvas</p>
+        <p className="sidebar-subtitle">Drag or Click to add</p>
       </div>
 
       <div className="sidebar-grid">
@@ -139,8 +158,9 @@ function Sidebar({ onColorChange, hasSelection, selectedNode }) {
             className="shape-item"
             onDragStart={(event) => onDragStart(event, node.type)}
             onDragEnd={onDragEnd}
+            onClick={() => handleShapeClick(node.type)}
             draggable
-            title={`Drag a ${node.label} node`}
+            title={`Drag or Click to add ${node.label}`}
           >
             <div className="shape-icon">{node.icon}</div>
             <span className="shape-label">{node.label}</span>
@@ -193,7 +213,8 @@ function Sidebar({ onColorChange, hasSelection, selectedNode }) {
         </label>
       </div>
     </aside>
-  );
+  </>
+);
 }
 
 const styles = {

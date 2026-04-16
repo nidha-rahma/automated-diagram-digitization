@@ -467,10 +467,19 @@
 }
 
 /* Responsive */
+/* Enhanced Responsive Design */
 @media (max-width: 640px) {
+    .input-page-container {
+        padding: 1rem;
+        height: auto;
+        min-height: 100vh;
+        overflow-y: auto;
+    }
+
     .glass-panel {
         padding: 1.5rem;
         border-radius: 20px;
+        gap: 1.5rem;
     }
 
     .panel-header h1 {
@@ -478,7 +487,60 @@
     }
 
     .tabs-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+
+    .tab-btn {
+        padding: 0.6rem 0.5rem;
+        font-size: 0.85rem;
         flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .tab-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .modern-textarea {
+        min-height: 150px;
+        padding: 1rem;
+        font-size: 0.95rem;
+    }
+
+    .drop-zone {
+        min-height: 150px;
+        padding: 1.5rem;
+    }
+
+    .upload-icon-container {
+        width: 48px;
+        height: 48px;
+    }
+
+    .generate-btn {
+        padding: 0.85rem;
+        font-size: 1rem;
+    }
+
+    .start-scratch-btn {
+        position: relative;
+        bottom: 0;
+        right: 0;
+        margin: 1.5rem auto;
+        width: fit-content;
+    }
+}
+
+@media (max-width: 480px) {
+    .panel-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .tabs-container {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 

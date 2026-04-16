@@ -15,15 +15,13 @@ const normaliseAndSnap = (nodes) => {
     process: 150,
     io: 150,
     decision: 120,
-    text: 150,
   };
-  const DEFAULT_WIDTH = 150;
 
   nodes.forEach((node) => {
     const nodeWidth =
-      node.width || (node.style && node.style.width) || maxWidths[node.type] || DEFAULT_WIDTH;
+      node.width || (node.style && node.style.width) || maxWidths[node.type];
     // Update maxWidths with maximum width of each node
-    if (nodeWidth > (maxWidths[node.type] || DEFAULT_WIDTH)) {
+    if (nodeWidth > maxWidths[node.type]) {
       maxWidths[node.type] = nodeWidth;
     }
   });
@@ -32,8 +30,8 @@ const normaliseAndSnap = (nodes) => {
   const columns = [];
 
   const nodesWithCenters = nodes.map((node) => {
-    const finalWidth = maxWidths[node.type] || DEFAULT_WIDTH;
-    const trueCenterX = (node.position?.x || 0) + finalWidth / 2;
+    const finalWidth = maxWidths[node.type];
+    const trueCenterX = node.position.x + finalWidth / 2;
     return { ...node, trueCenterX, finalWidth };
   });
 
@@ -67,13 +65,6 @@ const normaliseAndSnap = (nodes) => {
       (col) => Math.abs(col.averageCenterX - node.trueCenterX) < TOLERANCE,
     );
 
-    if (!myColumn) {
-      const cleanNode = { ...node };
-      delete cleanNode.trueCenterX;
-      delete cleanNode.finalWidth;
-      return cleanNode;
-    }
-
     const targetCenterX = myColumn.averageCenterX;
     const centeredX = targetCenterX - node.finalWidth / 2;
     const cleanNode = { ...node };
@@ -85,7 +76,7 @@ const normaliseAndSnap = (nodes) => {
       style: { ...cleanNode.style, width: node.finalWidth },
       position: {
         x: centeredX,
-        y: cleanNode.position?.y || 0,
+        y: cleanNode.position.y,
       },
     };
   });
@@ -395,5 +386,35 @@ export const useFlowchart = (initialData) => {
     onEdgesDelete,
     updateEdgeLabel,
     changeNodeColor,
+    addNodeAtCenter: useCallback((type) => {
+      takeSnapShot();
+      
+      // Get the current center of the flow viewport
+      const { x, y, zoom } = useReactFlow().getViewport();
+      const centerX = (-x + window.innerWidth / 2) / zoom;
+      const centerY = (-y + window.innerHeight / 2) / zoom;
+      
+      const snappedX = Math.round((centerX - 75) / 15) * 15;
+      const snappedY = Math.round((centerY - 20) / 15) * 15;
+
+      let defaultW = 120, defaultH = 60;
+      if (type === "decision") {
+        defaultW = 120; defaultH = 120;
+      } else if (type === "start") {
+        defaultW = 90; defaultH = 40;
+      } else if (type === "io") {
+        defaultW = 100; defaultH = 40;
+      }
+
+      const newNode = {
+        id: `node_${crypto.randomUUID()}`,
+        type,
+        position: { x: snappedX, y: snappedY },
+        data: { label: `${type.toUpperCase()}` },
+        style: { width: defaultW, height: defaultH },
+      };
+
+      setNodes((nds) => nds.concat(newNode));
+    }, [setNodes, takeSnapShot]),
   };
 };

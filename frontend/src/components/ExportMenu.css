@@ -95,3 +95,22 @@
   background: #e0e7ff;
   color: #4f46e5;
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+  .export-trigger-btn {
+    padding: 0 10px;
+    height: 36px;
+    min-width: 70px;
+    font-size: 13px;
+  }
+  
+  .export-dropdown {
+    min-width: 140px;
+  }
+  
+  .export-option {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}

@@ -216,3 +216,33 @@
   border-color: rgba(0, 0, 0, 0.4);
   color: #0f172a;
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+  .text-style-toolbar {
+    padding: 6px 8px;
+    gap: 4px;
+    border-radius: 10px;
+    max-width: 280px;
+    justify-content: center;
+  }
+  
+  .ts-btn {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .ts-swatch {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .ts-select {
+    height: 28px;
+    font-size: 12px;
+  }
+  
+  .ts-divider {
+    height: 20px;
+  }
+}

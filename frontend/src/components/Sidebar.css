@@ -1,4 +1,4 @@
-/* Matches the dark theme of the Input Page */
+/* Responsive Sidebar Transitions */
 .sidebar-container {
   width: 200px;
   background-color: #0f172a; 
@@ -10,12 +10,78 @@
   color: #f8fafc;
   font-family: 'Outfit', sans-serif;
   box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2);
-  z-index: 10;
+  z-index: 1000;
   height: 100vh; 
   overflow-y: auto; 
   overflow-x: hidden;
   box-sizing: border-box;
   flex-shrink: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-container.closed {
+  width: 0;
+  padding: 24px 0;
+  border-right: none;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Toggle Button Styling */
+.sidebar-toggle-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 1100;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(30, 41, 59, 0.8);
+  backdrop-filter: blur(8px);
+  color: #f8fafc;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-toggle-btn.open {
+  left: 215px; /* Position next to the opened sidebar */
+}
+
+.light-theme .sidebar-toggle-btn {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: #e2e8f0;
+  color: #334155;
+}
+
+/* Mobile Overrides (Floating Sidebar) */
+@media (max-width: 768px) {
+  .sidebar-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    box-shadow: 5px 0 25px rgba(0, 0, 0, 0.4);
+  }
+  
+  .sidebar-container.open {
+    width: 240px;
+    padding: 70px 20px 24px 20px; /* Make space for the toggle button */
+  }
+
+  .sidebar-toggle-btn.open {
+    left: 10px; /* Stay in place on mobile when open if you prefer, or move */
+  }
+  
+  /* On mobile, when sidebar is open, keep toggle button in a fixed spot */
+  .sidebar-toggle-btn {
+    top: 15px;
+    left: 15px;
+  }
 }
 
 .sidebar-container::-webkit-scrollbar {

@@ -46,8 +46,10 @@ function FlowCanvas({ initialData, initialTitle, dbId, theme, toggleTheme }) {
     onEdgesDelete,
     updateEdgeLabel,
     changeNodeColor,
+    addNodeAtCenter,
   } = useFlowchart(initialData);
 
+  const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 768);
   const [edgeLabelEdit, setEdgeLabelEdit] = useState(null);
   const [textEditingNodeId, setTextEditingNodeId] = useState(null);
   const [recentColors, setRecentColors] = useState([]);
@@ -56,6 +58,8 @@ function FlowCanvas({ initialData, initialTitle, dbId, theme, toggleTheme }) {
     nodes.filter((n) => n.selected).length === 1
       ? nodes.find((n) => n.selected)
       : null;
+
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   const circleButtonStyle = {
     width: "40px",
@@ -136,12 +140,13 @@ function FlowCanvas({ initialData, initialTitle, dbId, theme, toggleTheme }) {
 
   return (
     <div
-      className={isDarkMode ? "dark-theme" : "light-theme"}
+      className={`${isDarkMode ? "dark-theme" : "light-theme"} flowchart-app-container`}
       style={{
         display: "flex",
         height: "100vh",
         width: "100vw",
         overflow: "hidden",
+        position: "relative",
         backgroundColor: isDarkMode ? "#0f172a" : "#F7F7F7",
       }}
     >
@@ -149,6 +154,9 @@ function FlowCanvas({ initialData, initialTitle, dbId, theme, toggleTheme }) {
         onColorChange={changeNodeColor}
         hasSelection={hasSelectedNodes}
         selectedNode={selectedNode}
+        addNodeAtCenter={addNodeAtCenter}
+        isOpen={sidebarOpen}
+        onToggle={toggleSidebar}
       />
       <div
         className="reactflow-wrapper"
@@ -219,7 +227,15 @@ function FlowCanvas({ initialData, initialTitle, dbId, theme, toggleTheme }) {
               </Panel>
             )}
 
-            <Panel position="top-left" style={{ margin: "20px" }}>
+            <Panel 
+              position="top-left" 
+              style={{ 
+                margin: "12px", 
+                marginLeft: "65px", // Make room for the sidebar toggle
+                display: "flex",
+                alignItems: "center"
+              }}
+            >
               <input
                 type="text"
                 value={title}
@@ -227,142 +243,136 @@ function FlowCanvas({ initialData, initialTitle, dbId, theme, toggleTheme }) {
                 onKeyDown={(e) => {
                   if (e.key === "Enter") e.target.blur();
                 }}
-                className="editor-title-input"
+                className="editor-title-input responsive-title"
                 style={{
                   textAlign: "center",
-                  fontSize: "14px",
+                  fontSize: "13px",
                   fontWeight: "500",
-                  color: "#1e293b",
-                  backgroundColor: "#ffffff",
-                  border: "1px solid #cbd5e1",
+                  color: isDarkMode ? "#f8fafc" : "#1e293b",
+                  backgroundColor: isDarkMode ? "rgba(30, 41, 59, 0.7)" : "#ffffff",
+                  border: "1px solid",
+                  borderColor: isDarkMode ? "rgba(255, 255, 255, 0.1)" : "#cbd5e1",
                   borderRadius: "6px",
-                  padding: "4px 8px",
+                  padding: "6px 10px",
                   outline: "none",
-                  minWidth: "100px",
+                  maxWidth: "150px",
                   width: `${Math.max((title || "").length, 8)}ch`,
                   boxShadow: "0 1px 3px rgba(0, 0, 0, 0.06)",
                   transition: "all 0.15s ease",
                   cursor: "text",
-                }}
-                onMouseEnter={(e) => {
-                  if (document.activeElement !== e.target) {
-                    e.target.style.borderColor = "#94a3b8";
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (document.activeElement !== e.target) {
-                    e.target.style.borderColor = "#cbd5e1";
-                  }
+                  backdropFilter: "blur(8px)",
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = "#2563eb";
-                  e.target.style.boxShadow =
-                    "0 0 0 3px rgba(37, 99, 235, 0.15)";
+                  e.target.style.borderColor = "#6366f1";
+                  e.target.style.boxShadow = "0 0 0 3px rgba(99, 102, 241, 0.2)";
                 }}
                 onBlur={(e) => {
                   handleTitleSave();
-                  e.target.style.borderColor = "#cbd5e1";
+                  e.target.style.borderColor = isDarkMode ? "rgba(255, 255, 255, 0.1)" : "#cbd5e1";
                   e.target.style.boxShadow = "0 1px 3px rgba(0, 0, 0, 0.06)";
                 }}
               />
             </Panel>
 
             <Panel
-              position="top right"
+              position="top-right"
               style={{
                 display: "flex",
-                gap: "10px",
+                gap: "8px",
                 alignItems: "center",
+                margin: "12px",
+                flexWrap: "wrap",
+                justifyContent: "flex-end",
+                maxWidth: "280px"
               }}
             >
-              <button
-                onClick={toggleTheme}
-                title={
-                  isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"
-                }
-                className="editor-panel-btn"
-                style={{ ...circleButtonStyle }}
-              >
-                {isDarkMode ? (
-                  <MdLightMode size={20} color="#f8fafc" />
-                ) : (
-                  <MdDarkMode size={20} color="#334155" />
-                )}
-              </button>
-              <button
-                onClick={undo}
-                disabled={past.length === 0}
-                title="Undo"
-                className="editor-panel-btn"
-                style={{
-                  ...circleButtonStyle,
-                  cursor: past.length === 0 ? "not-allowed" : "pointer",
-                  opacity: past.length === 0 ? 0.5 : 1,
-                }}
-              >
-                <MdUndo size={22} color={isDarkMode ? "#f8fafc" : "#334155"} />
-              </button>
-              <button
-                onClick={redo}
-                disabled={future.length === 0}
-                title="Redo"
-                className="editor-panel-btn"
-                style={{
-                  ...circleButtonStyle,
-                  cursor: future.length === 0 ? "not-allowed" : "pointer",
-                  opacity: future.length === 0 ? 0.5 : 1,
-                }}
-              >
-                <MdRedo size={22} color={isDarkMode ? "#f8fafc" : "#334155"} />
-              </button>
+              <div style={{ display: "flex", gap: "6px" }}>
+                <button
+                  onClick={toggleTheme}
+                  title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                  className="editor-panel-btn"
+                  style={{ ...circleButtonStyle, width: "36px", height: "36px" }}
+                >
+                  {isDarkMode ? <MdLightMode size={18} color="#f8fafc" /> : <MdDarkMode size={18} color="#334155" />}
+                </button>
+                <button
+                  onClick={undo}
+                  disabled={past.length === 0}
+                  title="Undo"
+                  className="editor-panel-btn"
+                  style={{
+                    ...circleButtonStyle,
+                    width: "36px", height: "36px",
+                    cursor: past.length === 0 ? "not-allowed" : "pointer",
+                    opacity: past.length === 0 ? 0.5 : 1,
+                  }}
+                >
+                  <MdUndo size={20} color={isDarkMode ? "#f8fafc" : "#334155"} />
+                </button>
+                <button
+                  onClick={redo}
+                  disabled={future.length === 0}
+                  title="Redo"
+                  className="editor-panel-btn"
+                  style={{
+                    ...circleButtonStyle,
+                    width: "36px", height: "36px",
+                    cursor: future.length === 0 ? "not-allowed" : "pointer",
+                    opacity: future.length === 0 ? 0.5 : 1,
+                  }}
+                >
+                  <MdRedo size={20} color={isDarkMode ? "#f8fafc" : "#334155"} />
+                </button>
+              </div>
 
-              <button
-                onClick={handleSave}
-                disabled={isSaving}
-                className={isSaving ? "editor-panel-btn" : "editor-save-btn"}
-                style={{
-                  padding: "0 16px",
-                  height: "40px",
-                  minWidth: "60px",
-                  boxSizing: "border-box",
-                  fontSize: "14px",
-                  justifyContent: "center",
-                  background: isSaving ? "#475569" : "#10b981",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "6px",
-                  cursor: isSaving ? "not-allowed" : "pointer",
-                  fontWeight: "600",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                }}
-              >
-                {isSaving ? "Saving..." : "Save"}
-              </button>
-              <ExportMenu
-                nodes={nodes}
-                edges={edges}
-                canvasRef={reactFlowWrapper}
-                title={title}
-              />
+              <div style={{ display: "flex", gap: "6px" }}>
+                <button
+                  onClick={handleSave}
+                  disabled={isSaving}
+                  className={isSaving ? "editor-panel-btn" : "editor-save-btn"}
+                  style={{
+                    padding: "0 12px",
+                    height: "36px",
+                    fontSize: "13px",
+                    background: isSaving ? "#475569" : "#10b981",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "6px",
+                    cursor: isSaving ? "not-allowed" : "pointer",
+                    fontWeight: "600",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                  }}
+                >
+                  {isSaving ? "..." : "Save"}
+                </button>
+                <ExportMenu
+                  nodes={nodes}
+                  edges={edges}
+                  canvasRef={reactFlowWrapper}
+                  title={title}
+                />
+              </div>
             </Panel>
 
-            <Panel position="bottom right">
+            <Panel position="bottom-right" style={{ margin: "12px" }}>
               <button
                 onClick={applyAutoLayout}
-                className="editor-panel-btn"
+                className="editor-panel-btn auto-layout-btn"
                 style={{
-                  padding: "10px 15px",
-                  background: "#555",
-                  color: "white",
-                  borderRadius: "5px",
+                  padding: "8px 12px",
+                  background: isDarkMode ? "rgba(54, 58, 70, 0.7)" : "#ffffff",
+                  color: isDarkMode ? "#f8fafc" : "#334155",
+                  border: isDarkMode ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid #cbd5e1",
+                  borderRadius: "6px",
                   cursor: "pointer",
-                  fontWeight: "bold",
-                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0, 2)",
+                  fontWeight: "600",
+                  fontSize: "12px",
+                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                  backdropFilter: "blur(8px)",
                 }}
               >
-                {" "}
                 Auto Layout
               </button>
             </Panel>
