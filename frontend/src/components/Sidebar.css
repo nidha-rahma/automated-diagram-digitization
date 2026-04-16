@@ -40,7 +40,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(30, 41, 59, 0.85); /* Slightly more opaque */
   backdrop-filter: blur(10px);
-  color: #f8fafc;
+  color: #ffffff;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -54,9 +54,9 @@
 }
 
 .light-theme .sidebar-toggle-btn {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: #e2e8f0;
-  color: #334155;
+  background: rgba(30, 41, 59, 0.9); /* Dark background even in light theme */
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff; /* Pure white icon */
 }
 
 /* Mobile Overrides (Floating Sidebar) */
