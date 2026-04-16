@@ -116,7 +116,8 @@ export const useFlowchart = (initialData) => {
   });
 
 
-  const { screenToFlowPosition } = useReactFlow();
+  const reactFlowInstance = useReactFlow();
+  const { screenToFlowPosition, project, getViewport } = reactFlowInstance;
 
   // History State
   const [past, setPast] = useState([]);
@@ -389,13 +390,17 @@ export const useFlowchart = (initialData) => {
     addNodeAtCenter: useCallback((type) => {
       takeSnapShot();
       
-      // Get the current center of the flow viewport
-      const { x, y, zoom } = useReactFlow().getViewport();
-      const centerX = (-x + window.innerWidth / 2) / zoom;
-      const centerY = (-y + window.innerHeight / 2) / zoom;
+      const conv = screenToFlowPosition || project;
+      if (!conv) return;
+
+      // Use the center of the window
+      const position = conv({
+        x: window.innerWidth / 2,
+        y: window.innerHeight / 2,
+      });
       
-      const snappedX = Math.round((centerX - 75) / 15) * 15;
-      const snappedY = Math.round((centerY - 20) / 15) * 15;
+      const snappedX = Math.round((position.x - 75) / 15) * 15;
+      const snappedY = Math.round((position.y - 20) / 15) * 15;
 
       let defaultW = 120, defaultH = 60;
       if (type === "decision") {

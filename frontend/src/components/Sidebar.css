@@ -201,6 +201,10 @@
   border: 1px solid #e2e8f0;
   color: #475569;
 }
+.shape-item {
+  cursor: pointer;
+  pointer-events: auto;
+}
 .light-theme .shape-item:hover {
   background: #e0e7ff;
   border-color: #818cf8;

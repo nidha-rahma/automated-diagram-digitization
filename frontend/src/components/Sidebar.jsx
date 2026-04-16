@@ -159,7 +159,7 @@ function Sidebar({ onColorChange, hasSelection, selectedNode, addNodeAtCenter, i
             onDragStart={(event) => onDragStart(event, node.type)}
             onDragEnd={onDragEnd}
             onClick={() => handleShapeClick(node.type)}
-            draggable
+            draggable={window.innerWidth > 768} // Only draggable on desktop
             title={`Drag or Click to add ${node.label}`}
           >
             <div className="shape-icon">{node.icon}</div>
