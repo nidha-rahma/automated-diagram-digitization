@@ -15,13 +15,15 @@ const normaliseAndSnap = (nodes) => {
     process: 150,
     io: 150,
     decision: 120,
+    text: 150,
   };
+  const DEFAULT_WIDTH = 150;
 
   nodes.forEach((node) => {
     const nodeWidth =
-      node.width || (node.style && node.style.width) || maxWidths[node.type];
+      node.width || (node.style && node.style.width) || maxWidths[node.type] || DEFAULT_WIDTH;
     // Update maxWidths with maximum width of each node
-    if (nodeWidth > maxWidths[node.type]) {
+    if (nodeWidth > (maxWidths[node.type] || DEFAULT_WIDTH)) {
       maxWidths[node.type] = nodeWidth;
     }
   });
@@ -30,8 +32,8 @@ const normaliseAndSnap = (nodes) => {
   const columns = [];
 
   const nodesWithCenters = nodes.map((node) => {
-    const finalWidth = maxWidths[node.type];
-    const trueCenterX = node.position.x + finalWidth / 2;
+    const finalWidth = maxWidths[node.type] || DEFAULT_WIDTH;
+    const trueCenterX = (node.position?.x || 0) + finalWidth / 2;
     return { ...node, trueCenterX, finalWidth };
   });
 
@@ -65,6 +67,13 @@ const normaliseAndSnap = (nodes) => {
       (col) => Math.abs(col.averageCenterX - node.trueCenterX) < TOLERANCE,
     );
 
+    if (!myColumn) {
+      const cleanNode = { ...node };
+      delete cleanNode.trueCenterX;
+      delete cleanNode.finalWidth;
+      return cleanNode;
+    }
+
     const targetCenterX = myColumn.averageCenterX;
     const centeredX = targetCenterX - node.finalWidth / 2;
     const cleanNode = { ...node };
@@ -76,7 +85,7 @@ const normaliseAndSnap = (nodes) => {
       style: { ...cleanNode.style, width: node.finalWidth },
       position: {
         x: centeredX,
-        y: cleanNode.position.y,
+        y: cleanNode.position?.y || 0,
       },
     };
   });
