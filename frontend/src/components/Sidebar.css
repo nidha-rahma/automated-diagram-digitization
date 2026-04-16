@@ -31,26 +31,26 @@
 /* Toggle Button Styling */
 .sidebar-toggle-btn {
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 15px; /* Slightly higher for more space */
+  left: 15px;
   z-index: 1100;
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(30, 41, 59, 0.8);
-  backdrop-filter: blur(8px);
+  background: rgba(30, 41, 59, 0.85); /* Slightly more opaque */
+  backdrop-filter: blur(10px);
   color: #f8fafc;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar-toggle-btn.open {
-  left: 215px; /* Position next to the opened sidebar */
+  left: 212px; /* Adjusted based on width and new size */
 }
 
 .light-theme .sidebar-toggle-btn {

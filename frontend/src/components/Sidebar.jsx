@@ -142,7 +142,7 @@ function Sidebar({ onColorChange, hasSelection, selectedNode, addNodeAtCenter, i
         onClick={onToggle}
         title={isOpen ? "Close Sidebar" : "Open Sidebar"}
       >
-        {isOpen ? <ChevronLeft size={20} /> : <Menu size={20} />}
+        <Menu size={18} />
       </button>
 
       <aside className={`sidebar-container ${isOpen ? 'open' : 'closed'}`}>
