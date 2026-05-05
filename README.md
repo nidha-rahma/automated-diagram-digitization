@@ -2,6 +2,9 @@
 
 Automated Diagram Digitization is a web-based platform that leverages Generative AI to convert static flowchart images and textual descriptions into interactive, editable, and standardized digital diagrams.
 
+## 🌐 Explore the Project
+https://click-flow-git-main-nidha-rahmas-projects.vercel.app/
+
 ## Features
 - **Image to Diagram:** Upload an image of a hand-drawn or static flowchart, and the AI will recognize the nodes, shapes, text, and connections to map them into a structured digital layout.
 - **Text to Diagram:** Write a natural language prompt or provide a structural algorithm, and the system will automatically generate a corresponding flowchart architecture.
