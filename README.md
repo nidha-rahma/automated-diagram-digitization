@@ -2,7 +2,7 @@
 
 Automated Diagram Digitization is a web-based platform that leverages Generative AI to convert static flowchart images and textual descriptions into interactive, editable, and standardized digital diagrams.
 
-## 🌐 Explore the Project
+## Explore the Project
 https://click-flow-git-main-nidha-rahmas-projects.vercel.app/
 
 ## Features
