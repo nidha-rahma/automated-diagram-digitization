@@ -11,7 +11,7 @@ Automated Diagram Digitization is a web-based platform that leverages Generative
 ## Tech Stack
 **Frontend:**
 - React 19 & Vite
-- ReactFlow & Dagre (Diagram visualization and layout mapping)
+- ReactFlow
 - Web-Standard CSS
 
 **Backend:**
